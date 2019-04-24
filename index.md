@@ -2,7 +2,7 @@
 
 Workflow: [Patron Hold Request](workflows/patron_hold_request.md)
 
-READMEs of Components:
+## READMEs of Components:
 
 * [Discovery UI](https://github.com/NYPL-discovery/discovery-front-end)
 * [Patron Service](https://github.com/NYPL-discovery/patron-service)
@@ -14,7 +14,7 @@ READMEs of Components:
 * [Recap Hold Request Service](https://github.com/NYPL/recap-hold-request-service)
 * [Recap Hold Request Consumer](https://github.com/NYPL/recap-hold-request-consumer)
 
-AWS Deployments:
+## AWS Deployments:
 
 * Discovery UI
   * Prod: Elastic Beanstalk: discovery-ui-production
@@ -57,7 +57,7 @@ AWS Deployments:
   * QA: Lambda > Functions > RecapHoldRequestConsumer-qa
 * AWS simple email service
 
-External Services:
+## External Services:
 
 * Sierra REST API
 * NCIP AcceptItem
