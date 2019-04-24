@@ -1,6 +1,6 @@
 # Patron Hold Request
 
-Workflow: `workflows/patron_hold_request.md`
+Workflow: https://github.com/NYPL/lsp_workflows/blob/master/workflows/patron_hold_request.md
 
 READMEs of Components:
 
