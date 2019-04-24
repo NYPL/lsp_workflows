@@ -4,7 +4,7 @@ Workflow: `workflows/patron_hold_request.md`
 
 READMEs of Components:
 
-* Discovery UI
+* Discovery UI https://github.com/NYPL-discovery/discovery-front-end
 * Patron Service https://github.com/NYPL-discovery/patron-service
 * Item Service https://github.com/NYPL-discovery/itemservice
 * Job Service https://github.com/NYPL/job-service
