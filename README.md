@@ -10,6 +10,7 @@ This repository has a workflow page for each workflow, as well as an index page 
  The ideal workflow page:
 
 * SHOULD cover every case that can occur in the workflow
+* SHOULD begin with a summary describing the workflow
 * SHOULD show some Input and Output for each component in each case
 * SHOULD have a link to a diagram of the workflow, where appropriate
 * SHOULD describe how to test the workflow

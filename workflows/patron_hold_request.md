@@ -8,7 +8,7 @@ The LSP is hosted in AWS and utilizes AWS features like lambdas and kinesis stre
 
 Due to both this approach, and the circumstances under which the LSP was built, the LSP exhibits a very fine granularity microservice approach, and uses a wider than normal variety of languages (Ruby, JavaScript and PHP).
 
-# Hold Request Process
+# Hold Request Process Summary
 
 1. Starting in the top-left corner, there are two ways that hold requests can be generated on behalf of NYPL patrons. The standard way is for a hold request button to be pressed in the NYPL Shared Collection Catalog (https://nypl.org/scc) by a logged-in NYPL patron. The other way if for a SCSB user to place the hold in the SCSB UI on behalf of a specific patron. SCSB users can also place multiple requests in the SCSB UI, in which case the requests are split into individual requests before hitting API Gateway.
 
