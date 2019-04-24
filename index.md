@@ -17,8 +17,8 @@ READMEs of Components:
 AWS Deployments:
 
 * Discovery UI
- * Prod: Elastic Beanstalk: discovery-ui-production
- * QA: Elastic Beanstalk: discovery-ui-qa
+  * Prod: Elastic Beanstalk: discovery-ui-production
+  * QA: Elastic Beanstalk: discovery-ui-qa
 * Job Service
  * Prod: Lambda > Functions > JobService-production
  * QA: Lambda > Functions > JobService-qa
