@@ -4,15 +4,15 @@ Workflow: [Patron Hold Request](workflows/patron_hold_request.md)
 
 READMEs of Components:
 
-* Discovery UI https://github.com/NYPL-discovery/discovery-front-end
-* Patron Service https://github.com/NYPL-discovery/patron-service
-* Item Service https://github.com/NYPL-discovery/itemservice
-* Job Service https://github.com/NYPL/job-service
-* Hold Request Service https://github.com/NYPL/hold-request-service
-* Hold Request Consumer https://github.com/NYPL/nypl-hold-request-consumer
-* Hold Request Result Consumer https://github.com/NYPL/hold-request-result-consumer
-* Recap Hold Request Service https://github.com/NYPL/recap-hold-request-service
-* Recap Hold Request Consumer https://github.com/NYPL/recap-hold-request-consumer
+* [Discovery UI](https://github.com/NYPL-discovery/discovery-front-end)
+* [Patron Service](https://github.com/NYPL-discovery/patron-service)
+* [Item Service](https://github.com/NYPL-discovery/itemservice)
+* [Job Service](https://github.com/NYPL/job-service)
+* [Hold Request Service](https://github.com/NYPL/hold-request-service)
+* [Hold Request Consumer](https://github.com/NYPL/nypl-hold-request-consumer)
+* [Hold Request Result Consumer](https://github.com/NYPL/hold-request-result-consumer)
+* [Recap Hold Request Service](https://github.com/NYPL/recap-hold-request-service)
+* [Recap Hold Request Consumer](https://github.com/NYPL/recap-hold-request-consumer)
 
 AWS Deployments:
 
