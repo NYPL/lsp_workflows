@@ -20,41 +20,41 @@ AWS Deployments:
   * Prod: Elastic Beanstalk: discovery-ui-production
   * QA: Elastic Beanstalk: discovery-ui-qa
 * Job Service
- * Prod: Lambda > Functions > JobService-production
- * QA: Lambda > Functions > JobService-qa
+  * Prod: Lambda > Functions > JobService-production
+  * QA: Lambda > Functions > JobService-qa
 * Job Service Database
- * Prod: shared-prod.frh6pg.0001.use1.cache.amazonaws.com
- * QA: shared-qa.frh6pg.0001.use1.cache.amazonaws.com
+  * Prod: shared-prod.frh6pg.0001.use1.cache.amazonaws.com
+  * QA: shared-qa.frh6pg.0001.use1.cache.amazonaws.com
 * Hold Request Service
- * Prod: Lambda > Functions > HoldRequestService-production
- * QA: Lambda > Functions > HoldRequestService-qa
+  * Prod: Lambda > Functions > HoldRequestService-production
+  * QA: Lambda > Functions > HoldRequestService-qa
 * Hold Request Service Database
- * Prod: RDS > Databases > hold-requests-production
- * QA: RDS > Databases > hold-requests-qa
+  * Prod: RDS > Databases > hold-requests-production
+  * QA: RDS > Databases > hold-requests-qa
 * Hold Request stream
- * Prod: Streams > HoldRequest-production
- * QA: Streams > HoldRequest-qa
+  * Prod: Streams > HoldRequest-production
+  * QA: Streams > HoldRequest-qa
 * Hold Request Consumer
- * Prod: Lambda > Functions > HoldRequestConsumer-production
- * QA: Lambda > Functions > HoldRequestConsumer-qa
+  * Prod: Lambda > Functions > HoldRequestConsumer-production
+  * QA: Lambda > Functions > HoldRequestConsumer-qa
 * Patron Service
- * Prod: Lambda > Functions > PatronService-production
- * QA: Lambda > Functions > PatronService-qa
+  * Prod: Lambda > Functions > PatronService-production
+  * QA: Lambda > Functions > PatronService-qa
 * Hold Request Result stream
- * Prod: Streams > HoldRequestResult-production
- * QA: Streams > HoldRequestResult-qa
+  * Prod: Streams > HoldRequestResult-production
+  * QA: Streams > HoldRequestResult-qa
 * Hold Request Result Consumer
- * Prod: Lambda > Functions > HoldRequestResultConsumer-production
- * QA: Lambda > Functions > HoldRequestResultConsumer-qa
+  * Prod: Lambda > Functions > HoldRequestResultConsumer-production
+  * QA: Lambda > Functions > HoldRequestResultConsumer-qa
 * Recap Hold Request Service
- * Prod: Lambda > Functions > RecapHoldRequestService-production
- * QA: Lambda > Functions > RecapHoldRequestService-qa
+  * Prod: Lambda > Functions > RecapHoldRequestService-production
+  * QA: Lambda > Functions > RecapHoldRequestService-qa
 * Recap Hold Request Stream
- * Prod: Streams > RecapHoldRequest-production
- * QA: Streams > RecapHoldRequest-qa
+  * Prod: Streams > RecapHoldRequest-production
+  * QA: Streams > RecapHoldRequest-qa
 * Recap Hold Request Consumer
- * Prod: Lambda > Functions > RecapHoldRequestConsumer-production
- * QA: Lambda > Functions > RecapHoldRequestConsumer-qa
+  * Prod: Lambda > Functions > RecapHoldRequestConsumer-production
+  * QA: Lambda > Functions > RecapHoldRequestConsumer-qa
 * AWS simple email service
 
 External Services:
@@ -63,5 +63,5 @@ External Services:
 * NCIP AcceptItem
 * SCSB API
 * SCSB UI
- * prod: https://scsb.recaplib.org/
- * qa: https://uat-recap.htcinc.com/
+  * prod: https://scsb.recaplib.org/
+  * qa: https://uat-recap.htcinc.com/
