@@ -1,0 +1,62 @@
+# NYPL Discovery UI Search Architecture
+
+Please see diagram at: [TBD]
+
+This workflow shows the steps for searching an item, patron log in, choosing a delivery location, and being ready to submit a hold request on NYPL's [Discovery UI](https://www.nypl.org/research/collections/shared-collection-catalog) as known as Shared Collection Catalog. The QA tier is [here](https://qa-www.nypl.org/research/collections/shared-collection-catalog).
+
+For the workflow after submitting a hold request, please see [Patron Hold Request](workflows/patron_hold_request.md).
+
+# Discovery UI Search Process Summary
+
+This summary will be using Production tier as the example, but QA tier should be similiar.
+
+## Search for Bibs
+
+1. Visit [NYPL Shared Collection Catalog](https://www.nypl.org/research/collections/shared-collection-catalog). In the search form, change different search field and enter the search keyword. Then, press "Search" button.
+
+1. Discovery UI sends two requests to Discovery API.
+    1. First is the request for getting the list of bibs that fits the search request.
+
+        The query string of the request is constructured as below,
+
+        1. q=`search keywords`
+        2. &filters[`filter category`][`the index of the filter in the same filter category`]=`filter value`
+        3. &sort=`the condition to sort the results`&sort_direction=`the diretion to sort`
+        4. &search_scope=`the field chosed with the dropdown from the search form`
+        5. &page=`the start page of the result list. default is 1`
+
+        For example, a possible query could be
+        `q=puppy&filters[materialType][0]=resourcetypes%3Aaud&filters[materialType][1]=resourcetypes%3Amov&sort=title&sort_direction=asc&search_scope=title`
+
+        It then sends to `https://platform.nypl.org/api/v0.1/discovery/resources?q=puppy&filters[materialType][0]=resourcetypes%3Aaud&filters[materialType][1]=resourcetypes%3Amov&sort=title&sort_direction=asc&search_scope=title&per_page=50`
+
+        Notice that `&per_page=50` means it returns the results divided by 50 items per page and it is hard coded in Discovery UI.
+
+    1. The second request is the request for the possible filters of the results from the first requests. For example, with the keyword `puppy`, the results could provide the filters of different languages and materials types for the user to refine the search results of searching `puppy`.
+
+        The query string for the second request is constructured as below,
+
+        1. q=`search keywords`
+        2. &filters[`filter category`][`the index of the filter in the same filter category`]=`filter value`
+        3. &search_scope=`the field chosed with the dropdown from the search form`
+
+        For example, a possible query could be
+        `q=puppy&filters[materialType][0]=resourcetypes%3Aaud&filters[materialType][1]=resourcetypes%3Amov&search_scope=title`
+
+        It then sends to `https://platform.nypl.org/api/v0.1/discovery/resources/aggregations?q=puppy&filters[materialType][0]=resourcetypes%3Aaud&filters[materialType][1]=resourcetypes%3Amov&search_scope=title`
+
+1. Discovery API then sends the two requests in order to Elasticsearch discovery-api-production. Then it returns both the responses back to Disovery UI.
+
+## Look up a Bib
+
+1. On search result page, Discovery UI parses the result and lists all the bibs. If a bib has available item(s), it will display the "Request" button.
+
+1. If the user clicks the "Request" button, please skip to step 9. If the users choose to click a bib's title, please see the next step.
+
+1. By clicking the bib's title, Discovery UI makes a request to Discovery API with the bib's bib ID. Discovery API makes the request to Elasticsearch Service. Finally Elasticsearch Service returns the bib's detailed information back to Discovery API and then back to Discovery UI. Discovery UI will then lead the user to the bib page.
+
+1. If the bib has available items, it will lists all the available items each with a "Request" button. By clicking the "Request" button, the user will send a request to Discovery API for possible delivery locations.
+
+1. If the user has not logged in yet, Discovery UI will ask the user to log in as the possible delivery locations are based on the user's Patron Type or PType. After log in, Discovery UI gets the received patrons cookie and decrypts the PType of the patron. Then Discovery UI will sends the requests with the PType to get possible delivery locations.
+
+1. The user will be delivered to the hold request page for choosing the preferred delivery location and then click "Submit Request" button to request a hold.
