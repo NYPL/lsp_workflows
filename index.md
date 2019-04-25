@@ -8,6 +8,7 @@ Workflow: [Discovery UI Search](workflows/discovery_ui_search.md)
 * [Patron Service](https://github.com/NYPL-discovery/patron-service)
 * [Discovery API](https://github.com/NYPL-discovery/discovery-api)
 * Elasticsearch Service (No repo)
+* [NYPL Core](https://github.com/NYPL/nypl-core)
 
 ## AWS Deployments:
 
