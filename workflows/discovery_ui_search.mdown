@@ -52,7 +52,7 @@ This summary will be using Production tier as the example, but QA tier should be
 
 1. On search result page, Discovery UI parses the result and lists all the bibs. If a bib has available items, it will display the "Request" button for the first available item.
 
-1. If the user clicks the "Request" button, Discovery UI will then proceed to the workflow of requesting a hold. Please see the workflow in the next section.
+1. If the user clicks the "Request" button, Discovery UI will then proceed to the workflow of requesting a hold. Please see the workflow in "Place a Hold" section.
 
 1. If the user clicks the bib's title, Discovery UI makes two requests to Discovery API with the bib's bib ID.
 
@@ -65,7 +65,7 @@ This summary will be using Production tier as the example, but QA tier should be
 1. Discovery API will then send the two requests to Elasticsearch discovery-api-production and return the responses back to Discovery UI. Discovery UI will assign the second response of annotated-marc formatting information to the first respons of JSON fomatting. The user then will be redirected to the bib page, such as
 `https://www.nypl.org/research/collections/shared-collection-catalog/bib/b15874170#tab1`
 
-## Place a hold
+## Place a Hold
 
 1. If the bib has available items, it will lists all the available items each with a "Request" button in the bib page or the just the first one in search result page. By clicking the "Request" button, Discovery UI will send three requests to Discovery API for possible delivery locations. The query will be constructed with the bib ID and item ID.
 
@@ -88,6 +88,9 @@ This summary will be using Production tier as the example, but QA tier should be
 
 1. Discovery API first calls https://platform.nypl.org/api/v0.1/`patron's ID` to get the patron's PType, and then map the PType with NYPL Core's sheet to get available delivery locations.
 
-  Note that even there's no avaialbe PType or the PType is not on NYPL Core yet, Discovery API will still returns a default set of delivery locations as the `Research` PType has. The reason why it is doing this is to avoid the new PType of users from being unable to request a hold before the PType is added to NYPL Core. However, if the PType is not allowed to putthe hold, then the hold request will never be executed by Sierra. At this moment, we don't have these kind of PTypes, yet we do not have any mechanism to alert the users if this happened either.
+  Note that even if there's no available PType or the PType is not on NYPL Core yet, Discovery API will still return a default set of delivery locations, which are those the Research PType has. The reason why it is doing this is to avoid users with a new PType from being unable to request a hold before the PType is added to NYPL Core. However, if the PType is not allowed to put the hold, then the hold request will never be executed by Sierra. At this moment, we don't have this kind of PType, yet we do not have any mechanism to alert the users if this happened either.
+
+  A patron's PType will affect the permission to put the hold on and check out an item. The library assigns the PType to a patron based on the age, living locations, the patron's organization and etc. To know more about the current PTypes we have on NYPL Core, please visit this link,
+  https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/patronTypes.csv
 
 1. Based on the responses from Discovery API, Discovery UI will then redirect the user to the hold page. At the page, the user can choose one of the delivery locations or electronic documents (if availabe) and then click "Submit Request" to place the hold.
