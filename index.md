@@ -1,3 +1,30 @@
+# Discovery UI Search
+
+Workflow: [Discovery UI Search](workflows/discovery_ui_search.md)
+
+## READMEs of Components:
+
+* [Discovery UI](https://github.com/NYPL-discovery/discovery-front-end)
+* [Patron Service](https://github.com/NYPL-discovery/patron-service)
+* [Discovery API](https://github.com/NYPL-discovery/discovery-api)
+* Elasticsearch Service (No repo)
+* [NYPL Core](https://github.com/NYPL/nypl-core)
+
+## AWS Deployments:
+
+* Discovery UI
+  * Prod: Elastic Beanstalk: discovery-ui-production
+  * QA: Elastic Beanstalk: discovery-ui-qa
+* Patron Service
+  * Prod: Lambda > Functions > PatronService-production
+  * QA: Lambda > Functions > PatronService-qa
+* Discovery API
+  * Prod: Elastic Beanstalk > discovery-api-prodcution
+  * QA: Elastic Beanstalk > discovery-api-qa
+* Elasticsearch Service
+  * Prod: Elasticsearch Service > discovery-api-prodcution
+  * QA: Elasticsearch Service > discovery-api-qa
+
 # Patron Hold Request
 
 Workflow: [Patron Hold Request](workflows/patron_hold_request.md)
