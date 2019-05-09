@@ -1,4 +1,4 @@
-Encore and Research Catalog Log in and Log out
+# Encore and Research Catalog Log in and Log out
 
 The workflow describes the different ways to log in and log out Encore and Research Catalog, which are the library's two main catalogs.
 
@@ -8,8 +8,6 @@ Research Catalog - https://catalog.nypl.org
 Research Catalog Test - https://nypl-sierra-test.nypl.org
 
 Notice that Encore could also called Catalog on Header.
-
-# Log in Encore and Research Cata log
 
 ## Log in with Header
 Visit NYPL's website and use `LOG IN` dropdown menu to choose either Encore or Research Catalog to log in. Notice on Header, Encore is called Catalog. Once the user has logged in one catalog, she will be logged in to anther one automatically.
@@ -23,7 +21,6 @@ For Encore Test, being logged in to Encore Prod won't log the user in to Encore 
 
 For Research Catalog Test, being logged in to Catalog Prod won't log the user in to Research  Catalog Test. And vice versa.
 
-# Log out from Encore and Research Catalog
 ## Log out with Header
 Visit NYPL's website and open `MY ACCOUNT` dropdown menu (it was `LOG IN` before logging in to any catalogs) and then click `LOG OUT`. It will then log the user out from both of the catalogs. If the user has been logged in to Research Catalog Test, she will be logged out from there also.
 
@@ -34,14 +31,14 @@ On Research Catalog, use the `Log Out` link on the left side menu to log out. On
 
 With either way to log out, Encore Test's log in status won't be affected.
 
-# Log out with Session Expired and JS Timer in Header
+## Log out with Session Expired and JS Timer in Header
 
-## Session Expired
+### Session Expired
 On Encore and Research Catalog, if a user has been inactive for more than 30 minutes, the log in session will be expired and the user will be logged out silently. On Encore, it will remain on the same page until the user tries to click any links on the page and then find out she is asked to log in again. On Research Catalog, she will be logged out and delivered to the main page of Research Catalog.
 
 More than that, as Header uses the cookie `nyplIdentityPatron` to determine the log in status display, being logged out when the session expired won't change the Header's log in status.
 
-## JS Timer in Header
+### JS Timer in Header
 
 The Repo of [Header](https://github.com/NYPL/dgx-header-component)
 

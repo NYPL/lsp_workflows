@@ -8,7 +8,7 @@ Workflow: [Encore and Research Catalog Log in and Log out](workflows/encore_and_
 * [Encore](https://bitbucket.org/NYPL/dgx-encore-custom-styling/src)
 * [Reseach Catalog](https://bitbucket.org/NYPL/dgx-webpac-styling/src/master/)
 
-## Deployment
+## Deployments
 
 * Header Component
   * [NYPL Header React NPM Component](https://www.npmjs.com/package/@nypl/dgx-header-component)
