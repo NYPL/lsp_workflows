@@ -49,8 +49,3 @@ To improve the user experience, we are curretly working on adding a timer to com
 After 30 minutes, the timer will delete three cookies, `PAT_LOGGED_IN`, which determines if the user has logged in, `nyplIdentityPatron`, which determines the Header's log in status, and `VALID_DOMAIN_LAST_VISITED`, which determines the last time the user reloads Encore or Research Catalog's domain. Then it will call a invisible iframe to load the URI of `LOGOUT` button so the user will be completely logged out.
 
 There will be an edge case that the timer won't work. If the user has an open Encore page while she keeps working on Research Catalog, after 30 mins, even she is not logged out from Research Catalog, but because the session on Encore has been expired, she will be silently logged out from Encore. Thus, if she visits Encore again, she will be asked to log in again. And the same case will happen on Research Catalog as well, if she is working on Encore and has Research Catalog open.
-
-
-
-
-
