@@ -1,6 +1,6 @@
 # Encore and Research Catalog Log in
 
-Workflow: [Encore and Research Catalog Log in](workflows/encore_and_research_catalog_log_in.md)
+Workflow: [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
 ## READMEs of Components:
 
