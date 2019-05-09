@@ -1,3 +1,26 @@
+# Encore and Research Catalog Log in
+
+Workflow: [Encore and Research Catalog Log in](workflows/encore_and_research_catalog_log_in.md)
+
+## READMEs of Components:
+
+* [Header Component](https://github.com/NYPL/dgx-header-component)
+* [Encore](https://bitbucket.org/NYPL/dgx-encore-custom-styling/src)
+* [Reseach Catalog](https://bitbucket.org/NYPL/dgx-webpac-styling/src/master/)
+
+## Deployment
+
+* Header Component
+  * [NYPL Header React NPM Component](https://www.npmjs.com/package/@nypl/dgx-header-component)
+
+For Encore and Research Catalog, we use III's platform to deploy them.
+
+* Encore
+  * Prod: https://ilsstaff.nypl.org:63100/sierra/admin/SignOnPage.html
+  * Test: https://nypl-sierra-test.iii.com:63100/sierra/admin/SignOnPage.html
+* Research Catalog
+Need to use the application III Runner to deploy the changes.
+
 # Discovery UI Search
 
 Workflow: [Discovery UI Search](workflows/discovery_ui_search.md)
