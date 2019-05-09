@@ -1,4 +1,4 @@
-# Encore and Research Catalog Log in
+# Encore and Research Catalog Log in and Log out
 
 Workflow: [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
