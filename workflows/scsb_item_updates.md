@@ -30,7 +30,7 @@ If the update is determined to be a "transfer" (i.e. item assigned a new bibid),
 { "barcodes": [ "123456" ], "user_email": "[registered email to send errors to]@nypl.org", "action": "transfer", "bib_record_number": "newbibnum", "source": "bib-item-store-update" }
 ```
 
-*For each bib*, the component determines if it's a bib _potentially_ with items stored in ReCAP based on whether 1) its first item is research, or 2) it's a known mixed-bib (a bib with both research and branch items). In either case, the bib definitely *might* have items in ReCAP, so we proceed by submitting all related item barcodes to the [SyncItemMetadataToSCSBService](https://github.com/NYPL/sync-item-metadata-to-scsb-service/) as "update" jobs, e.g.:
+*For each bib*, the component determines if it's a bib _potentially_ with items stored in ReCAP based on whether 1) its first item is research, or 2) it's a known mixed-bib (a bib with both research and branch items). In either case, the bib definitely *might* have items in ReCAP. (We make these initial checks to avoid querying the SCSB api unnecessarily.) Having made that determination we [query SCSB api](https://github.com/NYPL/sync-item-metadata-to-scsb-listener/blob/c4c24fa33927095d540a7ebe4cbebf9183c0baef/lib/bib_handler.rb#L101) for all barcodes by bibid to verify they actually exist there. If the SCSB api returns any barcodes, we pass those on to the [SyncItemMetadataToSCSBService](https://github.com/NYPL/sync-item-metadata-to-scsb-service/) as "update" jobs, e.g.:
 
 ```
 { "barcodes": [ "123456", "6789" ], "user_email": "[registered email to send errors to]@nypl.org", "action": "update" }
