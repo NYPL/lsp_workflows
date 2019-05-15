@@ -10,7 +10,7 @@ Research Catalog Test - https://nypl-sierra-test.nypl.org
 Notice that Encore could also called Catalog on Header.
 
 ## Log in with Header
-Visit NYPL's website and use `LOG IN` dropdown menu to choose either Encore or Research Catalog to log in. Notice on Header, Encore is called Catalog. Once the user has logged in one catalog, she will be logged in to anther one automatically.
+Visit NYPL's website and use `LOG IN` dropdown menu to choose either Encore or Research Catalog to log in. Notice on Header, Encore is called Catalog. Once the user has logged in one catalog, she will be logged in to another one automatically.
 
 ## Log in with Log in Button
 Visit the catalog's page and use the `LOGIN` button to log in.
@@ -44,7 +44,7 @@ The Repo of [Header](https://github.com/NYPL/dgx-header-component)
 
 The codes of time is located at `src/utils/encoreCatalogLogOutTimer.js`.
 
-To improve the user experience, we are curretly working on adding a timer to completely log out the users after 30 minutes if the user is not active on either Encore or Research Catalog (because they have to be logged out together). The timer will start a 30 minutes count down once the user logged in. Every time the user reload the pages with `browse.nypl.org` (Encore's domain) or `catalog.nypl.org` (Research Catalog's domain) the timer will restart a new 30 minutes count down again.
+To improve the user experience, we are currently working on adding a timer to completely log out the users after 30 minutes if the user is not active on either Encore or Research Catalog (because they have to be logged out together). The timer will start a 30 minutes countdown once the user logged in. Every time the user reload the pages with `browse.nypl.org` (Encore's domain) or `catalog.nypl.org` (Research Catalog's domain) the timer will restart a new 30 minutes count down again.
 
 After 30 minutes, the timer will delete three cookies, `PAT_LOGGED_IN`, which determines if the user has logged in, `nyplIdentityPatron`, which determines the Header's log in status, and `VALID_DOMAIN_LAST_VISITED`, which determines the last time the user reloads Encore or Research Catalog's domain. Then it will call a invisible iframe to load the URI of `LOGOUT` button so the user will be completely logged out.
 
