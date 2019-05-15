@@ -79,3 +79,9 @@ After 30 minutes, the timer will delete three cookies, `PAT_LOGGED_IN`, which de
 There will be an edge case that the timer won't work. If the user has an open Encore page while she keeps working on Research Catalog, after 30 mins, even she is not logged out from Research Catalog, but because the session on Encore has been expired, she will be silently logged out from Encore. Thus, if she visits Encore again, she will be asked to log in again. And the same case will happen on Research Catalog as well, if she is working on Encore and has Research Catalog open.
 
 ## Related Cookies
+
+1. PAT_LOGGED_IN: Session cookie on `.nypl.org` containing true/false. It will only assigned the moment the user logs in Encore or Research Catalog. It will be deleted when the user is logged out from either of the catalog. This cookie is for Encore and Research Catalog to know whether the user should be treated is logged in. I believe if the cookie exists but `JSESSIONID` is expired, the user will be asked to log in again.
+
+1. JSESSIONID: Session cookie on `browse.nypl.org` so it will only be accessed when on Encore. I believe this cookie is how Encore depends on to log the user out after the log in time is expired.
+
+1. nyplIdentitityPatron: This is the session cookie assigned by NYPL's OAuth log in service. It provides NYPL's Header to know if the user has been logged in, and based on that Header will display correct UI. For now, we have some issue to keep `nyplIdentitityPatron` synced with `PAT_LOGGED_IN` because when the session expired on Encore or Research Catalog, it won't necessary delete `nyplIdentitityPatron` at the same time.
