@@ -64,6 +64,8 @@ SCSBuster allows:
 
 SCSBuster creates "updates" and "transfers" in the sierra-updates-for-scsb SQS in exactly the same way that [SyncItemMetadataService](https://github.com/NYPL/sync-item-metadata-to-scsb-service/) does. (One small exception: updates & transfers created by the [SyncItemMetadataToSCSBListener](https://github.com/NYPL/sync-item-metadata-to-scsb-listener) include "source": "bib-item-store-update" to differentiate them from manual updates.) In the future we'd like SCSSBuster to use [SyncItemMetadataService](https://github.com/NYPL/sync-item-metadata-to-scsb-service/) for writing to SQS.
 
+Note that "refile" requests made through SCSBuster do not generate Sierra-Updates-For-SCSB jobs. Refile requests are made entirely within our own infrastructure. A refile request is made by posting to our platform api at `recap/refile-requests`. The [RefileRequestService](https://github.com/NYPL/refile-request-service) [makes a SIP2 "checkin" call](https://github.com/NYPL/refile-request-service/blob/2f84aa0bc52351a6651a47a441014af6297e4367/src/Controller/RefileRequestController.php#L106-L110) against our ILS. This is done at different times in various workflows, often to clear "IN TRANSFER" or other unavailable statuses.
+
 ## Processing Sierra-Updates-For-SCSB Jobs
 
 [SCSBItemUpdater](https://github.com/NYPL-discovery/scsb_item_updater) has two running workers: one consumes SQS and populates a secondary Redis queue. The other consumes that Redis queue.
