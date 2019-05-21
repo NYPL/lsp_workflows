@@ -15,19 +15,19 @@ Workflows:
  * [Discovery UI Search](workflows/discovery_ui_search.md)
  * [Patron Hold Request](workflows/patron_hold_request.md)
 
-## Item Service
+## Encore Custom Styling
 
-Repo: https://github.com/NYPL-discovery/itemservice
+Repo: https://bitbucket.org/NYPL/dgx-encore-custom-styling/src)
 
-Workflows:
- * [Patron Hold Request](workflows/patron_hold_request.md)
+Workflows: 
+ * [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
-## Job Service
+## Header Component
 
-Repo: https://github.com/NYPL/job-service
+Repo: https://github.com/NYPL/dgx-header-component
 
-Workflows:
- * [Patron Hold Request](workflows/patron_hold_request.md)
+Workflows: 
+ * [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
 ## Hold Request Consumer
 
@@ -46,6 +46,20 @@ Workflows:
 ## Hold Request Service
 
 Repo: https://github.com/NYPL/hold-reuqest-service
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Item Service
+
+Repo: https://github.com/NYPL-discovery/itemservice
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Job Service
+
+Repo: https://github.com/NYPL/job-service
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
@@ -85,6 +99,14 @@ Repo: https://github.com/NYPL-discovery/schemaservice
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Webpac Custom Styling
+
+Repo: https://bitbucket.org/NYPL/dgx-webpac-styling/src/master/
+
+Workflows:
+ * [Discovery UI Search](workflows/discovery_ui_search.md)
+
 
 # External Services:
 
