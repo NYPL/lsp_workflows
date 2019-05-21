@@ -1,117 +1,141 @@
-# Encore and Research Catalog Log in and Log out
+# Index of Components
 
-Workflow: [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
+## Discovery API
 
-## READMEs of Components:
+Repo: https://github.com/NYPL-discovery/discovery-api
 
-* [Header Component](https://github.com/NYPL/dgx-header-component)
-* [Encore](https://bitbucket.org/NYPL/dgx-encore-custom-styling/src)
-* [Reseach Catalog](https://bitbucket.org/NYPL/dgx-webpac-styling/src/master/)
+Workflows:
+ * [Discovery UI Search](workflows/discovery_ui_search.md)
 
-## Deployments
+## Discovery UI
 
-* Header Component
-  * [NYPL Header React NPM Component](https://www.npmjs.com/package/@nypl/dgx-header-component)
+Repo: https://github.com/NYPL-discovery/discovery-front-end
 
-For Encore and Research Catalog, we use III's platform to deploy them.
+Workflows:
+ * [Discovery UI Search](workflows/discovery_ui_search.md)
+ * [Patron Hold Request](workflows/patron_hold_request.md)
 
-* Encore
-  * Prod: https://ilsstaff.nypl.org:63100/sierra/admin/SignOnPage.html
-  * Test: https://nypl-sierra-test.iii.com:63100/sierra/admin/SignOnPage.html
-* Research Catalog
-Need to use the application III Runner to deploy the changes.
+## Encore Custom Styling
 
-# Discovery UI Search
+Repo: https://bitbucket.org/NYPL/dgx-encore-custom-styling/src)
 
-Workflow: [Discovery UI Search](workflows/discovery_ui_search.md)
+Workflows: 
+ * [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
-## READMEs of Components:
+## Header Component
 
-* [Discovery UI](https://github.com/NYPL-discovery/discovery-front-end)
-* [Patron Service](https://github.com/NYPL-discovery/patron-service)
-* [Discovery API](https://github.com/NYPL-discovery/discovery-api)
-* Elasticsearch Service (No repo)
-* [NYPL Core](https://github.com/NYPL/nypl-core)
+Repo: https://github.com/NYPL/dgx-header-component
 
-## AWS Deployments:
+Workflows: 
+ * [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
-* Discovery UI
-  * Prod: Elastic Beanstalk: discovery-ui-production
-  * QA: Elastic Beanstalk: discovery-ui-qa
-* Patron Service
-  * Prod: Lambda > Functions > PatronService-production
-  * QA: Lambda > Functions > PatronService-qa
-* Discovery API
-  * Prod: Elastic Beanstalk > discovery-api-prodcution
-  * QA: Elastic Beanstalk > discovery-api-qa
-* Elasticsearch Service
-  * Prod: Elasticsearch Service > discovery-api-prodcution
-  * QA: Elasticsearch Service > discovery-api-qa
+## Hold Request Consumer
 
-# Patron Hold Request
+Repo: https://github.com/NYPL/nypl-hold-request-consumer
 
-Workflow: [Patron Hold Request](workflows/patron_hold_request.md)
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
 
-## READMEs of Components:
+## Hold Request Result Consumer
 
-* [Discovery UI](https://github.com/NYPL-discovery/discovery-front-end)
-* [Patron Service](https://github.com/NYPL-discovery/patron-service)
-* [Item Service](https://github.com/NYPL-discovery/itemservice)
-* [Job Service](https://github.com/NYPL/job-service)
-* [Hold Request Service](https://github.com/NYPL/hold-request-service)
-* [Hold Request Consumer](https://github.com/NYPL/nypl-hold-request-consumer)
-* [Hold Request Result Consumer](https://github.com/NYPL/hold-request-result-consumer)
-* [Recap Hold Request Service](https://github.com/NYPL/recap-hold-request-service)
-* [Recap Hold Request Consumer](https://github.com/NYPL/recap-hold-request-consumer)
+Repo: https://github.com/NYPL/hold-request-result-consumer
 
-## AWS Deployments:
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
 
-* Discovery UI
-  * Prod: Elastic Beanstalk: discovery-ui-production
-  * QA: Elastic Beanstalk: discovery-ui-qa
-* Job Service
-  * Prod: Lambda > Functions > JobService-production
-  * QA: Lambda > Functions > JobService-qa
-* Job Service Database
-  * Prod: shared-prod.frh6pg.0001.use1.cache.amazonaws.com
-  * QA: shared-qa.frh6pg.0001.use1.cache.amazonaws.com
-* Hold Request Service
-  * Prod: Lambda > Functions > HoldRequestService-production
-  * QA: Lambda > Functions > HoldRequestService-qa
-* Hold Request Service Database
-  * Prod: RDS > Databases > hold-requests-production
-  * QA: RDS > Databases > hold-requests-qa
-* Hold Request stream
-  * Prod: Streams > HoldRequest-production
-  * QA: Streams > HoldRequest-qa
-* Hold Request Consumer
-  * Prod: Lambda > Functions > HoldRequestConsumer-production
-  * QA: Lambda > Functions > HoldRequestConsumer-qa
-* Patron Service
-  * Prod: Lambda > Functions > PatronService-production
-  * QA: Lambda > Functions > PatronService-qa
-* Hold Request Result stream
-  * Prod: Streams > HoldRequestResult-production
-  * QA: Streams > HoldRequestResult-qa
-* Hold Request Result Consumer
-  * Prod: Lambda > Functions > HoldRequestResultConsumer-production
-  * QA: Lambda > Functions > HoldRequestResultConsumer-qa
-* Recap Hold Request Service
-  * Prod: Lambda > Functions > RecapHoldRequestService-production
-  * QA: Lambda > Functions > RecapHoldRequestService-qa
-* Recap Hold Request Stream
-  * Prod: Streams > RecapHoldRequest-production
-  * QA: Streams > RecapHoldRequest-qa
-* Recap Hold Request Consumer
-  * Prod: Lambda > Functions > RecapHoldRequestConsumer-production
-  * QA: Lambda > Functions > RecapHoldRequestConsumer-qa
-* AWS simple email service
+## Hold Request Service
 
-## External Services:
+Repo: https://github.com/NYPL/hold-reuqest-service
 
-* Sierra REST API
-* NCIP AcceptItem
-* SCSB API
-* SCSB UI
-  * prod: https://scsb.recaplib.org/
-  * qa: https://uat-recap.htcinc.com/
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Item Service
+
+Repo: https://github.com/NYPL-discovery/itemservice
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Job Service
+
+Repo: https://github.com/NYPL/job-service
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## NYPL Core
+
+Repo: https://github.com/NYPL/nypl-core
+
+Workflows:
+ * [Discovery UI Search](workflows/discovery_ui_search.md)
+
+## Patron Service
+
+Repo: https://github.com/NYPL-discovery/patron-service
+
+Workflows:
+ * [Discovery UI Search](workflows/discovery_ui_search.md)
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Recap Hold Request Consumer
+
+Repo: https://github.com/NYPL/recap-hold-request-consumer
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Recap Hold Request Service
+
+Repo: https://github.com/NYPL/recap-hold-request-service
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Schema Service
+
+Repo: https://github.com/NYPL-discovery/schemaservice
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Webpac Custom Styling
+
+Repo: https://bitbucket.org/NYPL/dgx-webpac-styling/src/master/
+
+Workflows:
+ * [Discovery UI Search](workflows/discovery_ui_search.md)
+
+
+# External Services:
+
+## Sierra NCIP AcceptItem
+
+Docs: [No working documentation could be found at writing.]
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## Sierra REST API
+
+Docs: https://techdocs.iii.com/sierraapi/Content/zReference/introduction.htm
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## SCSB API
+
+Docs: https://scsb.recaplib.org:9093/swagger-ui.html#/
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+## SCSB UI
+
+Workflows:
+ * [Patron Hold Request](workflows/patron_hold_request.md)
+
+Environments:
+  * Production: https://scsb.recaplib.org/
+  * QA: https://uat-recap.htcinc.com/
