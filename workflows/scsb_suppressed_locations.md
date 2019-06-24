@@ -12,7 +12,9 @@ We maintain a copy of the customer codes [in NYPL Core](https://github.com/NYPL/
 
 ## Hold Requests in SCSB
 
-The hold request workflow is described in detail in the [NYPL Patron Hold Request Architecture workflow](./patron_hold_request.md) and [diagrammed](https://docs.google.com/presentation/d/1Tmb53yOUett1TLclwkUWa-14EOG9dujAyMdLzXOdOVc/edit#slide=id.g330b256cdf_0_0). For the purpose of describing the special case of requests to suppressed locations, here's a distillation of the essential steps:
+The hold request workflow is described in the [NYPL Patron Hold Request Architecture workflow](./patron_hold_request.md) and [diagrammed](https://docs.google.com/presentation/d/1Tmb53yOUett1TLclwkUWa-14EOG9dujAyMdLzXOdOVc/edit#slide=id.g330b256cdf_0_0). For the purpose of understanding the special case of requests to suppressed locations, here's a detailed description of what happens when staff request an NYPL item to a suppressed customer code via SCSB UI:
+
+(Note that everything in the following script also applies to requests made for non-suppressed customer codes except for the final point, 7. For suppressed locations, RecapHoldRequestConsumer skips hitting the Sierra API, closing the related job successfully as if a hold was created. For non-suppressed locations, RecapHoldRequestConsumer uses the Sierra API to create a hold and closes the related job based on the success of that call.)
 
 1. SCSB POSTs to our hold-requests endpoint ([HoldRequestService](../index.md#hold-request-service)) data like the following:
 
@@ -93,7 +95,7 @@ In both cases, the response from the Sierra API [is inspected for "success", ret
 
 ### Quietly failing hold requests for known suppressed SCSB locations
 
-When the item is an NYPL item, [a special check is made](https://github.com/NYPL/recap-hold-request-consumer/blob/08d4c29066c68693410777b236c1e227d3ccccd0/models/sierra_request.rb#L50-L52) to determine if the requested delivery location is among [several known "suppressed" locations](https://github.com/NYPL/recap-hold-request-consumer/blob/08d4c29066c68693410777b236c1e227d3ccccd0/models/sierra_request.rb#L15). If the location is suppressed, [the Sierra API request is entirely skipped; The compponent responds with `code` "204", indicating success](https://github.com/NYPL/recap-hold-request-consumer/blob/08d4c29066c68693410777b236c1e227d3ccccd0/models/sierra_request.rb#L56).
+When the item is an NYPL item, [a special check is made](https://github.com/NYPL/recap-hold-request-consumer/blob/08d4c29066c68693410777b236c1e227d3ccccd0/models/sierra_request.rb#L50-L52) to determine if the requested delivery location is among [several known "suppressed" locations](https://github.com/NYPL/recap-hold-request-consumer/blob/08d4c29066c68693410777b236c1e227d3ccccd0/models/sierra_request.rb#L15). If the location is suppressed, [the Sierra API request is entirely skipped; The component responds with `code` "204", indicating success](https://github.com/NYPL/recap-hold-request-consumer/blob/08d4c29066c68693410777b236c1e227d3ccccd0/models/sierra_request.rb#L56).
 
 Essentially, the hold request is not created in Sierra, but the component responds as if it has been. This is done because SCSB is watching the relevant job and waiting for the job to read as succeeded before marking its own "Request" record as successful and initiating physical transfer of the item. In most cases the suppressed SCSB location doesn't have any related Sierra location, so there would be no location to use in the hold anyway. Rather we pretend that a hold has been created. NYPL staff must manually create a hold upon receipt of the item.
 
@@ -105,9 +107,9 @@ When a new suppressed location is added to SCSB, there may be no Sierra location
 
 ### 1. Add `recapCustomerCode` and `location` entries to NYPL-Core
 
- i. The two-character customer code will need to be added to the `recapCustomerCodes` mappings.
+ i. The two-character customer code will need to be added to the [`recapCustomerCodes`](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/recapCustomerCodes.csv) mappings. (Note that `.csv` mapping changes should accompany [an equivalent `.json`](https://github.com/NYPL/nypl-core/tree/master/vocabularies/json-ld) file change. See [NYPL-Core Scripts](https://github.com/NYPL/nypl-core/tree/master/vocabularies/scripts) for help.)
 
- ii. A related `locations` mapping will also be needed so that the new customerCode appears to map to Sierra locations.
+ ii. A related [`locations`](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/locations.csv) mapping will also be needed so that the new customerCode appears to map to Sierra locations.
 
  iii. Once [tagged and merged to master](https://github.com/NYPL/nypl-core#general-workflow-for-changes), the NYPL-Core change should be published to S3 using [NYPL Core Objects](../index.md#nypl-core-objects) ([See "deploy" instructions in README](https://github.com/NYPL/nypl-core-objects#pushing-to-s3)).
 
