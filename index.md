@@ -35,6 +35,7 @@ Repo: https://github.com/NYPL/nypl-hold-request-consumer
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## Hold Request Result Consumer
 
@@ -42,6 +43,7 @@ Repo: https://github.com/NYPL/hold-request-result-consumer
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## Hold Request Service
 
@@ -63,6 +65,7 @@ Repo: https://github.com/NYPL/job-service
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## NYPL Core
 
@@ -70,6 +73,14 @@ Repo: https://github.com/NYPL/nypl-core
 
 Workflows:
  * [Discovery UI Search](workflows/discovery_ui_search.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
+
+## NYPL Core Objects
+
+Repo: https://github.com/NYPL/nypl-core-objects
+
+Workflows:
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## Patron Service
 
@@ -85,6 +96,7 @@ Repo: https://github.com/NYPL/recap-hold-request-consumer
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## Recap Hold Request Service
 
@@ -92,6 +104,7 @@ Repo: https://github.com/NYPL/recap-hold-request-service
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## Schema Service
 
@@ -116,6 +129,7 @@ Docs: [No working documentation could be found at writing.]
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## Sierra REST API
 
@@ -123,6 +137,7 @@ Docs: https://techdocs.iii.com/sierraapi/Content/zReference/introduction.htm
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 ## SCSB API
 
@@ -135,6 +150,7 @@ Workflows:
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
+ * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
 Environments:
   * Production: https://scsb.recaplib.org/
