@@ -140,6 +140,7 @@ curl -X POST --header 'Content-Type: application/json' --header 'Accept: */*' --
     "NYPL"
   ]
 }' 'https://scsb.recaplib.org:9093/searchService/search'
+```
 
 A successful response resembles:
 ```
