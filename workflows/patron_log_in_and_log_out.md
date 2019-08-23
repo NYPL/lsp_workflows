@@ -29,9 +29,9 @@ Although the redirect paths and end result differs for each of the above, the es
 * If successful, `catalog.nypl.org` creates the `PAT_LOGGED_IN` cookie
 * `Auth.nypl.org` bounces user to `login.nypl.org` where the `nyplIdentityPatron` cookie is created and user is finally redirected to the `redirect_uri` (which may itself issue its own redirects)
 
-See [A1. Logging in via "Log Into the Catalog](#a1-logging-in-via-log-into-the-catalog) and [#A1. Logging in via "Log Into the Research Catalog](#a2-logging-in-via-log-into-the-research-catalog) for a detailed script of the redirects that occur in those paths.
+See [A1. Logging in via "Log Into the Catalog"](#a1-logging-in-via-log-into-the-catalog) and [A1. Logging in via "Log Into the Research Catalog"](#a2-logging-in-via-log-into-the-research-catalog) for a detailed script of the redirects that occur in those paths.
 
-See [#A3. Related Cookies](#a3-related-cookies) for notes on the cookies involved.
+See [A3. Related Cookies](#a3-related-cookies) for notes on the cookies involved.
 
 ### Special Considerations
 
@@ -67,7 +67,7 @@ The Header Component sets `VALID_DOMAIN_LAST_VISITED`, a cookie holding a UNIX t
 When `VALID_DOMAIN_LAST_VISITED` indicates the visitor hasn't visited a catalog page in 30+ minutes, the Header Component [deletes several cookies](https://github.com/NYPL/dgx-header-component/blob/a652d44c416f1e677687e2e2044404f9a7ddf35c/src/utils/encoreCatalogLogOutTimer.js#L78-L80):
 
  * `PAT_LOGGED_IN` must be deleted to ensure the catalog doesn't mistake a user as being logged in (i.e. avoid the login-to-search bug)
- * `VALID_DOMAIN_LAST_VISITED` must be deleted to ensure subsequent logins don't mistake an old value of `VALID_DOMAIN_LAST_VISITED` for a new, valid one(which would likely cause the user to be immediately logged out)
+ * `VALID_DOMAIN_LAST_VISITED` must be deleted to ensure subsequent logins don't mistake an old value of `VALID_DOMAIN_LAST_VISITED` for a new, valid one (which would likely cause the user to be immediately logged out)
  * `nyplIdentityPatron` must be deleted so that the Header Component login state matches the catalog's
 
 It also creates a hidden iframe that loads `https://browse.nypl.org/iii/encore/logoutFilterRedirect?suite=def` to ensure Encore (and by extension the Classic Catalog) fully terminate the user's session. It's not entirely certain this is necessary, but the catalogs have been observed retaining some sense of login state when only `PAT_LOGGED_IN` is deleted.
