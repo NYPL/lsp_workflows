@@ -35,7 +35,7 @@ See [#a3-related-cookies](#A3. Related Cookies) for notes on the cookies involve
 
 ### Special Considerations
 
-Logging in by following the "Research Catalog" login link is the only way to log in to that catalog; Logging in via Encore will not log you into the Classic Catalog. I do not know why.
+~Logging in by following the "Research Catalog" login link is the only way to log in to that catalog; Logging in via Encore will not log you into the Classic Catalog. I do not know why.~ [TODO Confirm/correct this.]
 
 Logging into the Test environment of either catalog will not log you into the Prod environment of that catalog - and vice versa.
 
@@ -57,7 +57,7 @@ Neither Encore nor the Research Catalog are aware of the `nyplIdentityPatron` co
 
 The [Header Component](https://github.com/NYPL/dgx-header-component) includes [code](https://github.com/NYPL/dgx-header-component/blob/master/src/utils/encoreCatalogLogOutTimer.js) to assist session expiration by doing its damnedest to delete stale login cookies any time it appears a patron has not visited a catalog page in 30 or more minutes.
 
-We observe that `PAT_LOGGED_IN` is created on `.nypl.org` any time a user logs in. `PAT_LOGGED_IN` is removed if 1) the user follows an explicit Logout link or 2) is forced to log out of a catalog by lingering on a catalog page for 30+ minutes. However, a user that logs in and then proceeds to visit exclusively non-catalog pages (or simply closes browser) will retain the `PAT_LOGGED_IN` cookie. The presense of a stale `PAT_LOGGED_IN` cookie confuses Sierra, sometimes causing it to request authorization to perform tasks that needn't require authorization (like search).
+We observe that `PAT_LOGGED_IN` is created on `.nypl.org` any time a user logs in. `PAT_LOGGED_IN` is removed if 1) the user follows an explicit Logout link or 2) is forced to log out of a catalog by lingering on a catalog page for 30+ minutes. However, a user that logs in and then proceeds to visit exclusively non-catalog pages (or simply closes browser) will retain the `PAT_LOGGED_IN` cookie. The presense of a stale `PAT_LOGGED_IN` cookie confuses Sierra, sometimes causing it to request authorization to perform tasks that needn't require authorization (like search). (We'll refer to this category of bug as "login-to-search" hereafter.)
 
 To ensure that `PAT_LOGGED_IN` is removed after 30mins of non-catalog activity, we drop a second cookie that represnts the last time the user visited a catalog page (a "valid domain").
 
@@ -69,7 +69,7 @@ When `VALID_DOMAIN_LAST_VISITED` indicates the visitor hasn't visited a catalog 
 
 \** There are, in truth, many other reasons besides the one noted that explain how one may arrive on a page with a `PAT_LOGGED_IN` cookie but no `VALID_DOMAIN_LAST_VISITED`. Here are the ones I can think of, with the reason I don't care about them:
   * *User logged in, selectively deleted `VALID_DOMAIN_LAST_VISITED`*: In this case, they will effectively extend the logout timer by 30 minutes, which means they may encounter the catalog bug where they're asked to log in when performing tasks that needn't require a login. Selectively modifying cookies voids your warranty and only makes your experience a little worse for a short period.
-  * *User does not have JS*: The logout timer running in the Header Component depends on JS, so if `VALID_DOMAIN_LAST_VISITED` isn't written because JS is disabled, there will likely be no JS enabled to run the logout timer based on it.
+  * *User does not have JS*: The logout timer running in the Header Component depends on JS, so if `VALID_DOMAIN_LAST_VISITED` isn't written because JS is disabled, there will likely be no JS enabled to run the logout timer based on it. `VALID_DOMAIN_LAST_VISITED` is set by JS and exists solely for use by that same JS code; If JS is disabled at the moment it would have been written, it is unlikely to be enabled at the moment it would be read. One contrived exception: If the user disables JS during the login process and enables it later on while on a non-catalog page, `VALID_DOMAIN_LAST_VISITED` will then be initialized to the full 30 minutes, leading to a forced logout in 30 minutes (unless they log out or visit a catalog page again). They may thus be vulnerable to the login-to-search bug for as much as 30 minutes. Without the logout timer in place, they would be vulnerable forever, so this edge case is not handled perfectly, but is an improvment on what would otherwise happen.
   * *User last visited a catalog page before we deployed the code that writes `VALID_DOMAIN_LAST_VISITED`*: Okay, that's real. We can't determine the age of `PAT_LOGGED_IN` (which is precisely what `VALID_DOMAIN_LAST_VISITED` is standing in to do). In this case, we'll optimistically initialize `LAST_DOMAIN_VISITED` to the current time, and the Header Component will log them out in 30 minutes. If they wander over to a catalog, they may encounter the login-to-search bug.
 
 ## Appendix
