@@ -29,9 +29,9 @@ Although the redirect paths and end result differs for each of the above, the es
 * If successful, `catalog.nypl.org` creates the `PAT_LOGGED_IN` cookie
 * `Auth.nypl.org` bounces user to `login.nypl.org` where the `nyplIdentityPatron` cookie is created and user is finally redirected to the `redirect_uri` (which may itself issue its own redirects)
 
-See [#a1-logging-in-via-log-into-the-catalog](#A1. Logging in via "Log Into the Catalog) and [#a2-logging-in-via-log-into-the-research-catalog](#A1. Logging in via "Log Into the Research Catalog) for a detailed script of the redirects that occur in those paths.
+See [A1. Logging in via "Log Into the Catalog](#a1-logging-in-via-log-into-the-catalog) and [#A1. Logging in via "Log Into the Research Catalog](#a2-logging-in-via-log-into-the-research-catalog) for a detailed script of the redirects that occur in those paths.
 
-See [#a3-related-cookies](#A3. Related Cookies) for notes on the cookies involved.
+See [#A3. Related Cookies](#a3-related-cookies) for notes on the cookies involved.
 
 ### Special Considerations
 
@@ -46,6 +46,7 @@ One can log out through a number of paths:
  * Header: Follow the Logout link under 'My Account'
  * Encore: Click `LOGOUT` button on the top right corner to log out. Once you click the button, it will log the user out from Encore and also Research Catalog. If the user has been logged in to Research Catalog Test, she will be logged out from there also.
  * Research Catalog: Use the `Log Out` link on the left side menu to log out. Once you click the link, it will log the user out from Research Catalog and Encore. If the user has been logged in to Research Catalog Test, she will be logged out from there also.
+ * Quiet logout via Header: After a period of 30 minutes inactivity (or activity in non-catalog pages) patrons are quietly logged out (See [JS Timer in Header](#js-timer-in-header)).
 
 ### Session Expiration
 
@@ -63,7 +64,13 @@ To ensure that `PAT_LOGGED_IN` is removed after 30mins of non-catalog activity, 
 
 `VALID_DOMAIN_LAST_VISITED` stores a UNIX timestamp in milliseconds indicating the last time the user visited a catalog page. It [is set to the current Unix timestamp](https://github.com/NYPL/dgx-header-component/blob/a652d44c416f1e677687e2e2044404f9a7ddf35c/src/utils/encoreCatalogLogOutTimer.js#L49) any time the user visits a catalog page* (because one's session is extended every time one visits a catalog page). On non-catalog pages, `VALID_DOMAIN_LAST_VISITED` is not typically* changed. On non-catalog pages, `VALID_DOMAIN_LAST_VISITED` is inspected to determine how much time has passed since the user visited a catalog page. A timer is thus initialized to forcefully log the user out when it completes.
 
-When `VALID_DOMAIN_LAST_VISITED` indicates the visitor hasn't visited a catalog page in 30+ minutes, the Header Component [deletes](https://github.com/NYPL/dgx-header-component/blob/a652d44c416f1e677687e2e2044404f9a7ddf35c/src/utils/encoreCatalogLogOutTimer.js#L78-L80) `PAT_LOGGED_IN`, `VALID_DOMAIN_LAST_VISITED`, and `nyplIdentityPatron`. It also creates a hidden iframe that loads `https://browse.nypl.org/iii/encore/logoutFilterRedirect?suite=def` to ensure Encore (and by extension the Classic Catalog) fully terminate the user's session.
+When `VALID_DOMAIN_LAST_VISITED` indicates the visitor hasn't visited a catalog page in 30+ minutes, the Header Component [deletes several cookies](https://github.com/NYPL/dgx-header-component/blob/a652d44c416f1e677687e2e2044404f9a7ddf35c/src/utils/encoreCatalogLogOutTimer.js#L78-L80):
+
+ * `PAT_LOGGED_IN` must be deleted to ensure the catalog doesn't mistake a user as being logged in (i.e. avoid the login-to-search bug)
+ * `VALID_DOMAIN_LAST_VISITED` must be deleted to ensure subsequent logins don't mistake an old value of `VALID_DOMAIN_LAST_VISITED` for a new, valid one(which would likely cause the user to be immediately logged out)
+ * `nyplIdentityPatron` must be deleted so that the Header Component login state matches the catalog's
+
+It also creates a hidden iframe that loads `https://browse.nypl.org/iii/encore/logoutFilterRedirect?suite=def` to ensure Encore (and by extension the Classic Catalog) fully terminate the user's session. It's not entirely certain this is necessary, but the catalogs have been observed retaining some sense of login state when only `PAT_LOGGED_IN` is deleted.
 
 \* Note that `VALID_DOMAIN_LAST_VISITED` *may* be created on non-catalog pages in one case: The user appears to be logged in but does not have a `VALID_DOMAIN_LAST_VISITED` cookie. This can only** arise when the user logs in with a `redirect_uri` that is not a catalog page. When logging in with a catalog page `redirect_uri`, `VALID_DOMAIN_LAST_VISITED` is set immediately after login. If a non-catalog page is specified as `redirect_uri`, the landing page will invoke Header Component code that will see the new `PAT_LOGGED_IN` cookie, but not see an attendant `VALID_DOMAIN_LAST_VISITED` cookie. If we accept that this can only arise when a non-catalog page is used in a login redirect, we must must immediately create `VALID_DOMAIN_LAST_VISITED` to ensure that timestamp represents the actual log in time as closely as possible. [Overall, it may be simpler to think about the rules around `VALID_DOMAIN_LAST_VISITED` as: It's created any time the user is logged in and it doesn't exist; It's *updated* any time the user is on a catalog page.]
 
@@ -109,7 +116,6 @@ When `VALID_DOMAIN_LAST_VISITED` indicates the visitor hasn't visited a catalog 
 
 ### A3. Related Cookies
 
-* `PAT_LOGGED_IN`: Session cookie on `.nypl.org` containing true/false. It will only assigned the moment the user logs in Encore or Research Catalog. It will be deleted when the user is logged out from either of the catalog. This cookie is for Encore and Research Catalog to know whether the user should be treated is logged in. I believe if the cookie exists but `JSESSIONID` is expired, the user will be asked to log in again.
-* `JSESSIONID`: Session cookie on `browse.nypl.org` so it will only be accessed when on Encore. I believe this cookie is how Encore depends on to log the user out after the log in time is expired.
-* `nyplIdentitityPatron`: This is the session cookie assigned by NYPL's OAuth log in service. It provides NYPL's Header to know if the user has been logged in, and based on that Header will display correct UI. For now, we have some issue to keep `nyplIdentitityPatron` synced with `PAT_LOGGED_IN` because when the session expired on Encore or Research Catalog, it won't necessary delete `nyplIdentitityPatron` at the same time.
+* `PAT_LOGGED_IN`: Session cookie on `.nypl.org` containing true/false. It will only assigned the moment the user logs in Encore or Research Catalog. It will be deleted when the user is logged out from either of the catalog. This cookie is for Encore and Research Catalog to know whether the user should be treated as logged in. I believe if the cookie exists but `JSESSIONID` is expired, the user will be asked to log in again.
+* `nyplIdentityPatron`: This is the session cookie assigned by NYPL's OAuth log in service. It provides NYPL's Header to know if the user has been logged in, and based on that Header will display correct UI. For now, we have some issue to keep `nyplIdentitityPatron` synced with `PAT_LOGGED_IN` because when the session expired on Encore or Research Catalog, it won't necessary delete `nyplIdentitityPatron` at the same time.
 * `VALID_DOMAIN_LAST_VISITED`: This cookie is set by 1) catalog pages and 2) any page used as `redirect_uri` in a login flow. It's a UNIX timestamp in milliseconds that stores the last time the user visited (or is assumed to have visited) a catalog page.
