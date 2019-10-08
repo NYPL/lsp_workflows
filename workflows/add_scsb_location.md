@@ -54,14 +54,14 @@ To test a location change ahead of it going live:
 1. Change HoldRequestConsumer-qa `NYPL_CORE_VERSION` to pre-release version number
 1. [Publish your changes to the QA S3 bucket](https://github.com/NYPL/nypl-core-objects#pushing-to-s3) (e.g. `NYPL_CORE_VERSION=v1.29a npm run deploy-qa`).
 1. Make sure the HoldRequestResultConsumer-qa has `API_RECAP_LOCATION_URL` and `API_SIERRA_LOCATION_URL` configured for 'qa' S3 (note this app *encrypts* these config values..)
-  * This component uses the customerCode and sierra location mapping files in S3 to derive the proper location labels for `deliveryLocation` and `pickupLocation`, which are set exclusively for requests originating from the SCSB UI and SCC, respectively. The labels are used in an email sent to the patron.
+   * This component uses the customerCode and sierra location mapping files in S3 to derive the proper location labels for `deliveryLocation` and `pickupLocation`, which are set exclusively for requests originating from the SCSB UI and SCC, respectively. The labels are used in an email sent to the patron.
 1. Make sure the RecapHoldRequestConsumer-qa is configured with a 'qa' S3 `LOCATIONS_URL`
-  * This component uses the sierra locations mapping to translate customer codes into sierra locations
+   * This component uses the sierra locations mapping to translate customer codes into sierra locations
 1. Update the discovery-api-qa Elasticbeanstalk app to `NYPL_CORE_VERSION` to the pre-release version number
 1. [Add the location(s) to the discovery-front-end](https://github.com/NYPL-discovery/discovery-front-end/blob/0e96af0e2d944657805d17c06ec3ff2a13a913ee/README.md#adding-locations)
 
 Now you can test a few different angles:
 1. Confirm delivery location changes by hitting the delivery locations endpoint via [NYPL data api client cli](https://github.com/NYPL-discovery/node-nypl-data-api-client)
-  - e.g. to test a scholar: `node bin/nypl-data-api.js get request/deliveryLocationsByBarcode?barcodes[]=33433061301572\&patronId=5427701`
+   - e.g. to test a scholar: `node bin/nypl-data-api.js get request/deliveryLocationsByBarcode?barcodes[]=33433061301572\&patronId=5427701`
 1. Confirm delivery location changes via SCC
-  - e.g. visit https://qa-www.nypl.org/research/collections/shared-collection-catalog/hold/request/b10000020-i13783786 with [different patrons](https://docs.google.com/spreadsheets/d/1S693bKROtRfU9ow4UkLGxTVScYfBvJqoV6yHRKG7bmk/edit#gid=1625093641)
+   - e.g. visit https://qa-www.nypl.org/research/collections/shared-collection-catalog/hold/request/b10000020-i13783786 with [different patrons](https://docs.google.com/spreadsheets/d/1S693bKROtRfU9ow4UkLGxTVScYfBvJqoV6yHRKG7bmk/edit#gid=1625093641)
