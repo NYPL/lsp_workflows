@@ -51,7 +51,7 @@ Follow instructions on [nypl-core](https://github.com/NYPL/nypl-core) for testin
 To test a location change ahead of it going live:
 
 1. [Make the change in NYPL-Core as a pre-release](https://github.com/NYPL/nypl-core#general-workflow-for-changes)
-1. Change HoldRequestConsumer-qa `NYPL_CORE_VERSION` to pre-release version number
+1. Change HoldRequestConsumer-qa `NYPL_CORE_VERSION` to pre-release version number (e.g. `v1.29a`)
 1. [Publish your changes to the QA S3 bucket](https://github.com/NYPL/nypl-core-objects#pushing-to-s3) (e.g. `NYPL_CORE_VERSION=v1.29a npm run deploy-qa`).
 1. Make sure the HoldRequestResultConsumer-qa has `API_RECAP_LOCATION_URL` and `API_SIERRA_LOCATION_URL` configured for 'qa' S3 (note this app *encrypts* these config values..)
    * This component uses the customerCode and sierra location mapping files in S3 to derive the proper location labels for `deliveryLocation` and `pickupLocation`, which are set exclusively for requests originating from the SCSB UI and SCC, respectively. The labels are used in an email sent to the patron.
