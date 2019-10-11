@@ -59,11 +59,20 @@ To test a location change ahead of it going live:
    * This component uses the customerCode and sierra location mapping files in S3 to derive the proper location labels for `deliveryLocation` and `pickupLocation`, which are set exclusively for requests originating from the SCSB UI and SCC, respectively. The labels are used in an email sent to the patron.
 1. Make sure the RecapHoldRequestConsumer-qa is configured with a 'qa' S3 `LOCATIONS_URL`
    * This component uses the sierra locations mapping to translate customer codes into sierra locations
-1. Update the discovery-api-qa Elasticbeanstalk app to `NYPL_CORE_VERSION` to the pre-release version number
 1. [Add the location(s) to the discovery-front-end](https://github.com/NYPL-discovery/discovery-front-end/blob/0e96af0e2d944657805d17c06ec3ff2a13a913ee/README.md#adding-locations)
+1. Update the discovery-api-qa Elasticbeanstalk app to `NYPL_CORE_VERSION` to the pre-release version number
 
 Now you can test a few different angles:
 1. Confirm delivery location changes by hitting the delivery locations endpoint via [NYPL data api client cli](https://github.com/NYPL-discovery/node-nypl-data-api-client)
    - e.g. to test a scholar: `node bin/nypl-data-api.js get request/deliveryLocationsByBarcode?barcodes[]=33433061301572\&patronId=5427701`
 1. Confirm delivery location changes via SCC
    - e.g. visit https://qa-www.nypl.org/research/collections/shared-collection-catalog/hold/request/b10000020-i13783786 with [different patrons](https://docs.google.com/spreadsheets/d/1S693bKROtRfU9ow4UkLGxTVScYfBvJqoV6yHRKG7bmk/edit#gid=1625093641)
+
+### To push NYPL-Core changes to Production
+
+1. Promote your pre-release to a release per [NYPL-Core instructions](https://github.com/NYPL/nypl-core#for-production)
+1. [Publish your changes to the Production S3 bucket](https://github.com/NYPL/nypl-core-objects#pushing-to-s3) (e.g. `npm run deploy-production`).
+1. Ensure the locations have been [added to the discovery-front-end](https://github.com/NYPL-discovery/discovery-front-end/blob/0e96af0e2d944657805d17c06ec3ff2a13a913ee/README.md#adding-locations) in Production
+1. Make sure the discovery-api-production Elasticbeanstalk app has latest `NYPL_CORE_VERSION` (or "master"). Restart app server if you make any change (as simply changing the ENV var [does not cause app code to reevaluate the variable](https://github.com/NYPL-discovery/discovery-api/issues/136)).
+
+Note that no change to `HoldRequestResultConsumer-production` is necessary for Production deployment because it [draws on the production S3 bucket for every lookup](https://github.com/NYPL/hold-request-result-consumer/blob/master/src/OAuthClient/LocationClient.php#L16). Similarly, no change is necessary for `RecapHoldRequestConsumer-production because it also [downloads the production S3 mapping for every lookup](https://github.com/NYPL/recap-hold-request-consumer/blob/bb8b00c46552c250b6c1b2bc7af245b4d0664978/models/location.rb#L9).
