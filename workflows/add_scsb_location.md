@@ -5,8 +5,10 @@ This document describes how to make recently added Sierra locations usable as de
 ## Overview
 
 There are two different kinds of locations:
- * locations (aka Sierra locations): These are locations found in Sierra
- * ReCAP locations (aka customer codes): These *map to* Sierra locations (and all other partner locations)
+ * locations (aka Sierra locations): These are location codes found in Sierra (including locations not involved in ReCAP).
+ * ReCAP locations (aka customer codes): ReCAP minted new unique identifiers called "customer codes" for every ReCAP partner location it ever sees. They all thus map to either one of our Sierra locations or a partner location.
+
+When a NYPL Sierra location has an equivalent ReCAP location, that link is made in the Sierra location as `nypl:recapCustomerCode`.
 
 It may be useful to preface this with: within the domain of "locations" (and among ReCAP locations) there are two disjoint categories of location that emerge from how they are used:
  * Holding locations: Locations that are referenced directly from an item indicate the location where the physical item is stored. The holding location links to zero or more delivery locations.
