@@ -1,0 +1,33 @@
+@startuml
+
+' This is a plantuml ( https://plantuml.com ) document
+' It's the source from which one can build the namesake `.png` as follows:
+'   brew install plantuml; plantuml [filename]
+
+(*) --> "I. Install Prerequisites" as prerequesites
+
+prerequesites --> "Develop your app" as app
+prerequesites --> "Create an `event.json`" as event
+prerequesites --> "Create a `sam.local.yml`" as sam
+prerequesites --> "Create a Swagger endopint" as swagger
+prerequesites --> "Initialize your Git remote" as git
+git --> "Create your persistent branches" as branches
+prerequesites --> "Travis for CI"
+--> "Travis for CD" as travis
+
+app --> "Create your first PR" as pr
+
+note right: Note: this may be multiple PRs
+
+event --> pr
+sam --> pr
+swagger --> pr
+branches --> pr
+travis --> pr
+
+--> "Add endpoints to API Gateway" as api_gateway
+--> "Update PlatformDocs" as platformdocs
+
+--> (*)
+
+@enduml
