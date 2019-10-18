@@ -71,6 +71,7 @@ Now you can test a few different angles:
 ### To push NYPL-Core changes to Production
 
 1. Promote your pre-release to a release per [NYPL-Core instructions](https://github.com/NYPL/nypl-core#for-production)
+1. Make extra sure that the new NYPL-Core version tag resolves and reflects your changes by checking `https://github.com/NYPL/nypl-core/tree/[NYPL_CORE_VERSION]/vocabularies`
 1. [Publish your changes to the Production S3 bucket](https://github.com/NYPL/nypl-core-objects#pushing-to-s3) (e.g. `npm run deploy-production`).
 1. Ensure the locations have been [added to the discovery-front-end](https://github.com/NYPL-discovery/discovery-front-end/blob/0e96af0e2d944657805d17c06ec3ff2a13a913ee/README.md#adding-locations) in Production
 1. Make sure the discovery-api-production Elasticbeanstalk app has latest `NYPL_CORE_VERSION` (or "master"). Restart app server if you make any change (as simply changing the ENV var [does not cause app code to reevaluate the variable](https://github.com/NYPL-discovery/discovery-api/issues/136)).
