@@ -25,7 +25,7 @@ There is no NYPL repository for the Swagger UI. To update the Swagger UI:
 
 We maintain a single Swagger JSON ([Open API Spec v2](https://swagger.io/specification/v2/)) that aggregates the individual Swagger JSONs from all endpoints in the Platform API. This is achieved via the [DocsService](https://github.com/NYPL/docsservice).
 
-The DocsService has a `DOCS_URLS`, which is a comma-delimited list of URLs that serve Swagger docs. Each service in the Platform API is responsible for serving its own Swagger document. See documentation on [Adding a Platform API Endpoint](./adding-a-platform-api-endpoint.md#swagger) for info on adding the docs route to your app. Once you have a working URL of the form `http://platform.nypl.org/api/v0.1/docs/your-app`, the next step is to register it with the DocsService to make your Swagger doc a part of the greater, aggregated Swagger doc.
+The DocsService has a `DOCS_URLS`, which is a comma-delimited list of URLs that serve Swagger docs. Each service in the Platform API is responsible for serving its own Swagger document. See documentation on [Adding a Platform API Endpoint](./adding-a-platform-api-endpoint.md#d-create-a-swagger-endpoint) for info on adding the docs route to your app. Once you have a working URL of the form `http://platform.nypl.org/api/v0.1/docs/your-app`, the next step is to register it with the DocsService to make your Swagger doc a part of the greater, aggregated Swagger doc.
 
 ### Updating the Swagger JSON
 

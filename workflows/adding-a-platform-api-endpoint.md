@@ -7,7 +7,7 @@ Note that the order of some of these steps is sometimes flexible; The strict dep
 
 ## I. Install Prerequesites
 
-### 1. [Install the AWS CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html#serverless-sam-cli-install-mac-aws-cli)
+### A. [Install the AWS CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html#serverless-sam-cli-install-mac-aws-cli)
 
 Ensure you have an AWS CLI "profile" named `nypl-digital-dev`. You're encouraged to not use a default profile (i.e. all `aws` calls should require an explicit `--profile` flag). For example, a good starting `~/.aws/credentials` might be:
 
@@ -17,15 +17,17 @@ aws_access_key_id = [your access key here]
 aws_secret_access_key = [your secret key here]
 ```
 
-### 2. [Install Docker](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html#serverless-sam-cli-install-mac-docker)
+### B. [Install Docker](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html#serverless-sam-cli-install-mac-docker)
 
 You'll need Docker for local SAM invocations, which allow you to run your code in an emulated Lambda environment.
 
-### 3. [Install SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html#serverless-sam-cli-install-mac-sam-cli)
+### C. [Install SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html#serverless-sam-cli-install-mac-sam-cli)
 
 You'll use `sam` to run ad-hoc tests of your code. It's also possible to deploy via `sam`, but that's not our practice.
 
-### 4. Make sure you have [`nvm`](https://github.com/nvm-sh/nvm#install--update-script) or [`rvm`](https://rvm.io/rvm/install) intalled for Node and Ruby, respectively
+### D. Install your Ruby/Node version manager
+
+Make sure you have [`nvm`](https://github.com/nvm-sh/nvm#install--update-script) or [`rvm`](https://rvm.io/rvm/install) intalled for Node and Ruby, respectively
 
 ## II. Write your app
 
@@ -33,7 +35,7 @@ What code you write first depends on your app and coding style, but getting a ba
 
 Note: If you're in the habit of committing often (which you should be), you should initialize non-`master` branch for your first commits: After running `git init`, create a new initial branch via `git checkout -b initial`. Make your commits into `initial`. That way, when it comes time to have your initial code reviewed, you can create a PR merging `initial` into `development` (or whatever your PR target branch is).
 
-### Create an `event.json`
+### A. Create an `event.json`
 
 Create an `event.json` that exemplifies a request to your endpoint. You may wish to create multiple event JSONs organized in `./sample-events`. `sam` provides a command to generate events modeling HTTP requests through the API Gateway.
 
@@ -51,7 +53,7 @@ For more info:
 sam local generate-event apigateway aws-proxy --help
 ```
 
-### Create a `sam.local.yml`
+### B. Create a `sam.local.yml`
 
 A [SAM template](https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md) describes your app's endpoints in a vendor agnostic form. SAM template files are also helpful for doing local, ad-hoc testing.
 
@@ -96,7 +98,7 @@ Make sure your choice of runtime agrees with your local Node/Ruby version:
   - Officially declare your choice of Node version in your repo by adding it to `.nvmrc`
   - Ensure you're using the declared Node version via `nvm use`, which will read your `.nvmrc`
 
-### Develop your app
+### C. Develop your app
 
 Develop your app until your local test suite passes and you get a satisfactory response to a sample event.
 
@@ -137,7 +139,7 @@ Encrypted environmental variables will need to be decrypted by your app, natural
  * SyncItemMetadataToSCSBService (Ruby) [uses an encrypted `SQS_QUEUE_URL`](https://github.com/NYPL/sync-item-metadata-to-scsb-service/blob/31e4553823f766a68ac87cb4f5f9d2aaa6946b14/lib/sqs_client.rb#L7), which uses a simple [`KmsClient`](https://github.com/NYPL/sync-item-metadata-to-scsb-service/blob/master/lib/kms_client.rb) for decryption.
  * DiscoveryApiIndexer (Node) uses a [KmsHelper module](https://github.com/NYPL-discovery/discovery-api-indexer/blob/master/lib/kms-helper.js) to provide two Promise-returning calls to decrypt environmental variables.
 
-### Create a Swagger endpoint
+### D. Create a Swagger endpoint
 
 All endpoints in the Platform API must be described in a [Swagger](https://swagger.io/) document. Each app is responsible for serving its own Swagger document describing each of its endpoints (except the endpoint that serves the Swagger document itself). Typically an app will listen for GET requests on "/docs/APPNAME". The value of APPNAME tends to be the app's repository name (minus "-service", because it's redundant). For example:
 
@@ -153,7 +155,7 @@ To understand how to write a Swagger document, you may choose some combination o
 
 \* You may notice Swagger validation errors if you add a `security` section to an endpoint that references "api_auth", a [security definition](https://swagger.io/specification/v2/#securityDefinitionsObject) that's not defined inside your Swagger document. Provided the you reference "api_auth", you can ignore the warning; The referenced security definition will be defined when your Swagger document is merged with the greater, aggregated Platform API Swagger document.
 
-### Initialize your Git Remote
+### E. Initialize your Git Remote
 
 [Create a new repo](https://github.com/organizations/NYPL/repositories/new) on Github.com.
 
@@ -166,7 +168,7 @@ Your repo should be public unless there's a very good reason to make it private 
 
 It's useful to leave your remote repository empty to start.
 
-### Create your persistent branches
+### F. Create your persistent branches
 
 You should also use github.com to create your persistent workflow branches. Depending on what [Git Workflow](https://github.com/NYPL/engineering-general/blob/git-workflows/standards/git-workflow.md) you choose for your app, you will need to create 1-2 workflow branches.https://github.com/NYPL/engineering-general/tree/git-workflows). For example, if you choose ["Development-QA-Master"](https://github.com/NYPL/engineering-general/blob/git-workflows/standards/git-workflow.md#development-qa-master), the most popular strategy among NYPL apps, you'll want to create "development" and "qa" branches.
 
@@ -180,7 +182,7 @@ To create an empty branch on github.com:
 
 Once the local version of your app is somewhat mature, you'll want to get [Travis](https://travis-ci.com/) set up to begin moving versions of your work into your presently empty remote repository. Travis will listen for all pushes to github.com to ensure your test suite passes for all new branches and pull requests ("CI"). Travis will also listen for updates to specific branches to deploy your code ("CD").
 
-### Travis for CI (Continuous Integration)
+### A. Travis for CI (Continuous Integration)
 
 Create a `.travis.yml` in your app. You can either read [our synopsis](https://github.com/NYPL/engineering-general/blob/master/standards/travis-ci.md), follow the [Travis CI Tutorial](https://docs.travis-ci.com/user/tutorial/), or just copy and modify from an existing [Ruby](https://github.com/NYPL/is-research-service/blob/development/.travis.yml) or [Node](https://github.com/NYPL-discovery/discovery-front-end/blob/development/.travis.yml) app. (If copying from an existing app, don't include the `deploy` and `env` sections as those are only relevant to CD.
 
@@ -188,7 +190,7 @@ Commit your `.travis.yml` to your working branch - along with any other uncommit
 
 Push your working branch to origin (e.g. `git push origin initial`). You can then visit [travis-ci](https://travis-ci.com/) (you may have to authorize via Github if this is your first visit). Within a minute or so you should see your app appear under "My Repositories". You should see it building and running your test suite against your pushed branch.
 
-### Travis for CD (Continuous Deployment)
+### B. Travis for CD (Continuous Deployment)
 
 Once you have a working Travis CI integration, you'll want to test deployment. Again, we provide a [helpful synopsis](https://github.com/NYPL/engineering-general/blob/master/standards/travis-ci.md#deploy), or you can review the [relevant Travis CI documentation](https://docs.travis-ci.com/user/deployment/lambda/). You can also just copy and modify from a [representative repo](https://github.com/NYPL/is-research-service/blob/development/.travis.yml).
 
@@ -199,7 +201,7 @@ Take special care with the following properties of your deployments:
  * `runtime`: This should be [an official AWS Lambda runtime identifier](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
  * `module_name`: This should be the basename of your front-door script (e.g. "app")
  * `handler_name`: This is the name of function inside yoru front-door script that is passed the event (e.g. "handle_event")
- * `environment_variables`: These are the config vars for the given deployment. These should align with the `Environment > Variables` in your `sam.local.yml (however note they should be formatted `KEY=VALUE` rather than `KEY: VALUE`)
+ * `environment_variables`: These are the config vars for the given deployment. These should align with the `Environment > Variables` in your `sam.local.yml` (however note they should be formatted `KEY=VALUE` rather than `KEY: VALUE`)
  * `access_key_id` & `secret_access_key`: These are the AWS credentials that Travis will use to deploy. *They should not be entered manually*. You should [use shell variables](https://github.com/NYPL/is-research-service/blob/0942eedc901de127a8b4ac5789d90d9c1460bfd0/.travis.yml#L28-L29).
  * `on`: This is the bit that determines what branches trigger deployments. In practice only "qa" and "master" (or "production") ever trigger deployments. 
 
@@ -211,13 +213,13 @@ Commit your changes and push to your initial branch.
 
 Deployment consists of 1. triggering Travis to package up your code as a Lambda function in AWS and 2) configuring the API Gateway to trigger your function on select endpoints.
 
-### Create your first PR
+### A. Create your first PR
 
 Go to your app's repo on github.com to create a new pull request proposing merging your initial branch (e.g. "initial") into your lowest tier persistent branch (e.g. "development"). Add a description that captures all of the things that work and all of the things that don't yet. Add your favorite co-workers as reviewers.
 
 After review passes, merge your PR. Depending on your chosen Git Workflow, you may then wish to merge to the "qa" branch. Do so manually (i.e. on the command line) and push to `origin`. You should find that Travis runs your test suite and attempts to deploy your app to QA. If anything about the deployment fails (it often does the first time), adjust your `.travis.yml` as needed and commit directly into your "qa" branch until it succeeds. (Follow up by merging your "qa" branch back into your lowest tier branch - e.g. "development" - to ensure feature branches include your fixes.)
 
-### Add endpoints to API Gateway
+### B. Add endpoints to API Gateway
 
 Your code is now deployed, but it's not listening to any event triggers. To allow your code to be triggered by calls to endpoints on `platform.nypl.org` and `qa-platform.nypl.org`, you need to connect your Lambda to a resource and method in API Gateway:
 
@@ -258,7 +260,7 @@ Once you're satisfied that you've wired up the integration correctly, you'll nee
 
 This will cause your changes to be immediately available for the selected "qa" Deployment Stage.
 
-### Update PlatformDocs
+### C. Update PlatformDocs
 
 By "deploying" to the "qa" stage of the API Gateway, you should be able to fetch your app's Swagger document. For example, here's the unauthenticated URL of the Swagger document for the SyncItemMetadataToScsb:
 
