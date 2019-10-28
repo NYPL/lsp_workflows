@@ -91,8 +91,8 @@ Things you may wish to change:
 Make sure your choice of runtime agrees with your local Node/Ruby version:
 * If using Ruby:
   - Select version `2.5.0` as that's [the max runtime supported in AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
-  - Officially declare your choice of ruby version in your repo via `echo "2.5.0" > .rvmrc` 
-  - Ensure you're using the declared ruby version via `rvm use`, which will read your `.rvmrc`
+  - Officially declare your choice of ruby version in your repo via `echo "2.5.0" > .ruby-version`
+  - Ensure you're using the declared ruby version via `rvm use`, which will read your `.ruby-version`
 * If using Node:
   - Select either Node version `8.10.0` or `10.16.3` depending on your requirements. (Better to choose the latest until you have a reason not to.)
   - Officially declare your choice of Node version in your repo by adding it to `.nvmrc`
