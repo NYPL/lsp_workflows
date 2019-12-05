@@ -23,10 +23,10 @@ The relationship between holding- and delivery-locations for Sierra and ReCAP lo
 When placing a hold request in SCC, the set of delivery locations presented is built by inspecting both `locations.json` and `recapCustomerCodes.json`, in effect. Specifically the delivery options are built by:
 1. [Identifying the customer code for the item via the SCSB API](https://github.com/NYPL-discovery/discovery-api/blob/fd8595c68d6aea25cbb063149d7f09404844d9ca/lib/delivery-locations-resolver.js#L102)
 1. [Determining the set of sierra locations that are valid for the given customer code](https://github.com/NYPL-discovery/discovery-api/blob/fd8595c68d6aea25cbb063149d7f09404844d9ca/lib/delivery-locations-resolver.js#L115) by:
-  i. Reaching into the [by_recap_customer_code mapping](https://nypl-core-objects-mapping-qa.s3.amazonaws.com/by_recap_customer_code.json) to
-  ii. Get the [prebaked](https://github.com/NYPL/nypl-core-objects/blob/4ecc5dad22ba6b61b6e26106df1d40ab2cdea20d/lib/by_recap_customer_code_factory.js#L13-L25) sierra locations that are traversable from the named customer code, which is built by:
-    - For the named ReCAP location, [get the deliverable ReCAP locations](https://github.com/NYPL/nypl-core-objects/blob/4ecc5dad22ba6b61b6e26106df1d40ab2cdea20d/lib/by_recap_customer_code_factory.js#L17)
-    - [Map those ReCAP locations to their equivalent Sierra location](https://github.com/NYPL/nypl-core-objects/blob/4ecc5dad22ba6b61b6e26106df1d40ab2cdea20d/lib/by_recap_customer_code_factory.js#L18-L20)
+   1. Reaching into the [by_recap_customer_code mapping](https://nypl-core-objects-mapping-qa.s3.amazonaws.com/by_recap_customer_code.json) to
+   1. Get the [prebaked](https://github.com/NYPL/nypl-core-objects/blob/4ecc5dad22ba6b61b6e26106df1d40ab2cdea20d/lib/by_recap_customer_code_factory.js#L13-L25) sierra locations that are traversable from the named customer code, which is built by:
+      -  For the named ReCAP location, [get the deliverable ReCAP locations](https://github.com/NYPL/nypl-core-objects/blob/4ecc5dad22ba6b61b6e26106df1d40ab2cdea20d/lib/by_recap_customer_code_factory.js#L17)
+      - [Map those ReCAP locations to their equivalent Sierra location](https://github.com/NYPL/nypl-core-objects/blob/4ecc5dad22ba6b61b6e26106df1d40ab2cdea20d/lib/by_recap_customer_code_factory.js#L18-L20)
 
 Thus, both mappings are necessary and directly effect what delivery options are presented to patrons in SCC.
 
