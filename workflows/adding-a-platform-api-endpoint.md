@@ -223,40 +223,40 @@ After review passes, merge your PR. Depending on your chosen Git Workflow, you m
 
 Your code is now deployed, but it's not listening to any event triggers. To allow your code to be triggered by calls to endpoints on `platform.nypl.org` and `qa-platform.nypl.org`, you need to connect your Lambda to a resource and method in API Gateway:
 
-* Log into the [AWS Console and navigate to "API Gateway"](https://console.aws.amazon.com/apigateway/home?region=us-east-1#/apis)
-* Select "Platform" (our sole API at writing)
-* Under Resources, select the nested resource that you want to hang your endpoint off of
-* If adding a new path (e.g. if "api/v0.1/recap" exists and you want to add "api/v0.1/recap/new-path"), select "recap" (the terminal, existing path) and choose `Actions > Create Resource`
-* With the resource selected, choose `Actions > Create Method` (After clicking, you may have to scroll back down to the resource to proceed.)
-* Choose the HTTP method you'd like to add and click the little gray checkmark. (You may have to scroll all the way back up to proceed.)
-* Set up your integration:
-  * Integration type: "Lambda function" (default)
-  * Use Lambda Proxy Integration: **enabled**
-  * Lambda Region: us-east-1 (default)
-  * Lambda Function: Enter the name of your lambda. Replace the "-qa" part with "-${stageVariables.environment}"
-  * Use Default Timeout: enabled (default)
-  * Click Save
-  * The interface will alert you to an extra step that's required to authorize the API Gateway to connect to your resource. Read [this document](https://github.com/NYPL/aws/blob/master/common/apigateway.md) to understand what to do with the suggested call.
-* To force consumers to authenticate calls to your endpoint (almost all do)
-  * On the "Method Execution" page for the method you've just added, click "Method Request"
-  * Change Authorization to "nyplAuthorizerInternal"
+1. Log into the [AWS Console and navigate to "API Gateway"](https://console.aws.amazon.com/apigateway/home?region=us-east-1#/apis)
+1. Select "Platform" (our sole API at writing)
+1. Under Resources, select the nested resource that you want to hang your endpoint off of
+1. If adding a new path (e.g. if "api/v0.1/recap" exists and you want to add "api/v0.1/recap/new-path"), select "recap" (the terminal, existing path) and choose `Actions > Create Resource`
+1. With the resource selected, choose `Actions > Create Method` (After clicking, you may have to scroll back down to the resource to proceed.)
+1. Choose the HTTP method you'd like to add and click the little gray checkmark. (You may have to scroll all the way back up to proceed.)
+1. Set up your integration:
+   1. Integration type: "Lambda function" (default)
+   1. Use Lambda Proxy Integration: **enabled**
+   1. Lambda Region: us-east-1 (default)
+   1. Lambda Function: Enter the name of your lambda. Replace the "-qa" part with "-${stageVariables.environment}"
+   1. Use Default Timeout: enabled (default)
+   1. Click Save
+   1. The interface will alert you to an extra step that's required to authorize the API Gateway to connect to your resource. Read [this document](https://github.com/NYPL/aws/blob/master/common/apigateway.md) to understand what to do with the suggested call.
+1. To force consumers to authenticate calls to your endpoint (almost all do)
+   1. On the "Method Execution" page for the method you've just added, click "Method Request"
+   1. Change Authorization to "nyplAuthorizerInternal" (Leave "Request Validator" as "NONE" and "API Key Required" as "false".)
 
-Repeat above to add a GET endpoint for your app's swagger endpoint (e.g. "/docs/bibs"). *Do not* add an authentication requirement to your swagger endpoint.
+Repeat steps 1-7 above to add a GET endpoint for your app's swagger endpoint (e.g. "/docs/bibs"). *Do not* add an authentication requirement to your swagger endpoint.
 
 Test your changes by:
- * Navigate to the Method Execution page for each route you've added
- * Select "Test"
- * Enter either "qa" or "production in `Stage Variables > environment`
- * Click Test
- * You should see the expected HTTP Status and Body. If something fails, you "Status: 200" and a "Response Body"
+1. Navigate to the Method Execution page for each route you've added
+1. Select "Test"
+1. Enter either "qa" or "production in `Stage Variables > environment`
+1. Click Test
+1. You should see the expected HTTP Status and Body. If something fails, you "Status: 200" and a "Response Body"
 
 Once you're satisfied that you've wired up the integration correctly, you'll need to "deploy" your API Gateway changes:
 
- * With the "Platform" API selected
- * Select Actions > Deploy API
- * Select Deployment Stage "qa"
- * Enter a brief description of the change (e.g. "Add MyService endpoints)
- * Click Deploy
+1. With the "Platform" API selected
+1. Select Actions > Deploy API
+1. Select Deployment Stage "qa"
+1. Enter a brief description of the change (e.g. "Add MyService endpoints)
+1. Click Deploy
 
 This will cause your changes to be immediately available for the selected "qa" Deployment Stage.
 
