@@ -9,11 +9,13 @@ Edits to NYPL Core tend to work like this:
 1. A request comes in asking for a location/ptype change
 1. The change is [added to NYPL-Core as a PR with a pre-release tag](https://github.com/NYPL/nypl-core#for-qa)
 1. The pre-release tag is used to preview the change in our QA stack (i.e. by setting `NYPL_CORE_VERSION` to the pre-release tag in effected components)
-1. If the effected components rely on an S3 lookups, one may need to do a QA "deploy" of NYPL-Core Objects S3 assets (e.g. `NYPL_CORE_VERSION=v1.29a npm run deploy-qa`)
+1. If the effected components rely on one or more S3 lookups, one may need to do a QA "deploy"\* of NYPL-Core Objects S3 assets (e.g. `NYPL_CORE_VERSION=v1.29a npm run deploy-qa`)
 1. After QC & approval, the feature is merged and a new release tag is created.
 1. Deploy NYPL Core Objects (i.e. to ensure S3 lookups are in sync with your changes)
 
 The specific requirements depend on what part of NYPL Core is changing. Locations are most tricky and [are documented in the "Add SCSB Location" workflow](https://github.com/NYPL/lsp_workflows/blob/master/workflows/add_scsb_location.md#add-entries-to-nypl-core).
+
+\* Typically with a Node module, we reserve "deploy" as an alias for npm publish as that's the action one takes to activate code changes for things that depend on the module. NYPL Core Objects is a little funny in that it has two "deploy"able aspects: The published NPM package and the S3 assets (which is the sense of "deploy" used above). Some integrations use the NPM package; Others (typically non-Javascript apps) use the published S3 assets. They're both valid ways to integrate NYPL Core Objects so I wouldn't necessarily call one set of deployed assets a more official deployed artifact over the other. The quotations around "deploy" are just meant to hint that "deploy" is just a word in the script name, but it's use should be scrutinized.
 
 ## Things that depend on NYPL-Core
 
