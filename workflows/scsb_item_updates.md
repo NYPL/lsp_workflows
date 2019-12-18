@@ -126,6 +126,40 @@ The notable difference between "transfer" and "update" is that we call [SCSB's "
 
 Errors can be thrown at several points in both "update" and "transfer" jobs. Errors are grouped by barcode and used to populate an email that is sent to the "user_email" associated with the request (in original SQS entry).
 
+## Troubleshooting
+
+### Incomplete records in SCSB
+
+Sometimes Heide will note that certain records persist in the SCSB Incompletes report.
+
+Often, you'll be handed the problematic barcodes. To get the list of problematic barcodes for yourself, you can use the SCSB UI to generate an Incompletes report. The SCSB Incompletes report can be obtained by logging into [SCSB UI](scsb.recaplib.org/) and navigating to Reports > Incomplete Records. Select "Show By" "NYPL" and click "Generate Report". Review the records shown or click "Export Records" to download a CSV.
+
+The process of determining why a barcode persists as an Incomplete is:
+
+**Before anything, check that the pollers are running and caught up**
+
+In the code examples that follow, I use the [nypl-data-api-client](https://www.npmjs.com/package/@nypl/nypl-data-api-client) cli.
+
+1. Check for item in ItemService:
+  * Search ItemService by barcode (e.g. `node bin/nypl-data-api.js get items?barcode=33433122229572`)
+
+2.A If item is not in ItemService, check Sierra:
+  * Use Sierra desktop client to search for the item by barcode (Function "Catalog" > select "b Barcode" > enter barcode)
+
+2.A.i If the item can be found in Sierra, see if item can be found by id in ItemService :
+ * Examine id in Sierra (next to "Record", you'll see a number like 'i156163123'
+ * Convert the "i-number" into an item id by removing the "i" prefix and dropping the final check digit (e.g. 'i156163123' becomes '15616312')
+ * Now query the ItemService for the item by id: `node bin/nypl-data-api.js get items/sierra-nypl/15616312`
+
+2.A.i.a If the item was not found in the ItemService by id, investigate a poller/retriever issue:
+ * Navigate to the [CloudWatch logs for the retriever](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/aws/lambda/SierraItemRetrieverRequest-production)
+ * Enter the item id into the search (e.g. 37526855)
+ * Optionally, restrict your search to the date range when you expect the retriever should have retrieved the item (e.g. if Sierra shows the item as having been last updated in the past few days, restrict your CloudWatch search to "1w" to make sure you completely cover the times when the retriever would have fetched the item)
+ * If no issue was found, 
+
+2.B If item is in ItemService:
+  * If record appears, verify that the scsb-xml can be generated using the SCSBOngoingAccessions endpoint (e.g. 
+
 
 ## Appendix A: SCSB API Search
 
@@ -393,3 +427,4 @@ A failed response may have HTTP response code 200, but resemble:
     ]
 }
 ```
+
