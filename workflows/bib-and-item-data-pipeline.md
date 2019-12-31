@@ -194,5 +194,47 @@ I can think of no way to use the Sierra API to paginate over records in a way th
 
 In general, this will not be an issue because we rarely paginate over large ranges; In general, the membership of the queried range does not change. But when fetching over large ranges of multiple hundreds of thousands of records, if one of those records is updated in the course of several paginated queries, we start losing records.
 
+## Appendix B: Re-playing updates
 
+For one reason or another, you may want to force the pipeline to re-process a bib or item from the very start. One way to do that is to change something trivial about the bib/item in Sierra. That's a bit messy (and you likely don't have permission), so an alternative is to re-play updates by generating Kinesis events at key places.
+
+The pollers merely insert bib and item ids into Kinesis streams to cause the retrievers to fetch those records. You can insert a bib item id into a Kinesis stream manually to *emulate* a poller having picked up that id as an organic update. You can use the [NYPL-Streams-Client CLI](https://github.com/NYPL-discovery/node-nypl-streams-client#cli) to do so.
+
+To get the client and configure it:
+
+```
+git clone git@github.com:NYPL-discovery/node-nypl-streams-client.git
+cd node-nypl-streams-client
+npm i
+
+cp config/sample.env config/qa.env
+# Fill in necessary values in config/qa.env
+# Repeat for config/production.env if you plan on re-processing production ids
+```
+
+To cause the QA retriever to re-fetch bib 21445503:
+```
+./cli/nypl-streams.js --envfile ./config/qa.env --profile nypl-digital-dev --schemaName SierraBibRetrievalRequest write SierraBibRetriever-qa '{ "id": "21445503" }'
+```
+
+To cause the QA retriever to re-fetch item 34518969:
+```
+./cli/nypl-streams.js --envfile ./config/qa.env --profile nypl-digital-dev --schemaName SierraItemUpdate write SierraItemRetriever-qa '{ "id": "34518969" }'
+```
+
+To cause the Production retriever to re-fetch bib 21445503:
+```
+./cli/nypl-streams.js --envfile ./config/production.env --profile nypl-digital-dev --schemaName SierraBibRetrievalRequest write SierraBibRetriever-production '{ "id": "21445503" }'
+```
+
+To cause the Production retriever to re-fetch item 34518969:
+```
+./cli/nypl-streams.js --envfile ./config/production.env --profile nypl-digital-dev --schemaName SierraItemUpdate write SierraItemRetriever-production '{ "id": "34518969" }'
+```
+
+If you have a file full of ids you want to push through the pipeline, you can use `bash` built-ins. For example to push a bunch of item ids through the pipeline from a file full of ids (Note you'll need to change the location of `nypl-streams-client` for your system):
+
+```
+while read line; do echo "Pushing $line"; ~/projects/discovery/nypl-streams-client/cli/nypl-streams.js write SierraItemRetriever-production --schemaName SierraItemUpdate "{ \"id\": \"$line\" }" --envfile ~/projects/discovery/nypl-streams-client/config/production.env --profile nypl-digital-dev; done < ids.csv
+```
 

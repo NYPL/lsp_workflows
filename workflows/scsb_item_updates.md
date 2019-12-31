@@ -136,7 +136,7 @@ Often, you'll be handed the problematic barcodes. To get the list of problematic
 
 The process of determining why a barcode persists as an Incomplete is:
 
-**Before anything, check that the pollers are running and caught up**
+**Before anything, check that the pollers are running and caught up.** See [Bib & Item Data Pipeline](./bib-and-item-data-pipeline) for notes on checking the health of the pollers and retrievers.
 
 In the code examples that follow, I use the [nypl-data-api-client](https://www.npmjs.com/package/@nypl/nypl-data-api-client) cli.
 
@@ -152,14 +152,15 @@ In the code examples that follow, I use the [nypl-data-api-client](https://www.n
  * Now query the ItemService for the item by id: `node bin/nypl-data-api.js get items/sierra-nypl/15616312`
 
 2.A.i.a If the item was not found in the ItemService by id, investigate a poller/retriever issue:
- * Navigate to the [CloudWatch logs for the retriever](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/aws/lambda/SierraItemRetrieverRequest-production)
- * Enter the item id into the search (e.g. 37526855)
+ * Search the poller and retriever logs by item id (e.g. 37526855). See [Bib & Item Data Pipeline](./bib-and-item-data-pipeline) for links to logs.
  * Optionally, restrict your search to the date range when you expect the retriever should have retrieved the item (e.g. if Sierra shows the item as having been last updated in the past few days, restrict your CloudWatch search to "1w" to make sure you completely cover the times when the retriever would have fetched the item)
- * If no issue was found, 
+ * If you don't find the item id in the retriever logs when you logically should (based on the updated date shown in Sierra), the item was probably a victim of the [Sierra pagination issue](./bib-and-item-data-pipeline#appendix-a-sierra-pagination-issues), which caused the id to be lost. You can re-play the id in the pipeline. See [Appendix B: Re-playing updates](./bib-and-item-data-pipeline#appendix-b-re-playing-updates) for techniques for "re-playing" bib/item updates.
 
-2.B If item is in ItemService:
-  * If record appears, verify that the scsb-xml can be generated using the SCSBOngoingAccessions endpoint (e.g. 
-
+2.B If item is in ItemService, verify that the scsb-xml can be generated using the SCSBOngoingAccessions endpoint:
+ * Look up the item's customer code [via the SCSB API](#appendix-a-scsb-api-search)
+ * Query the SCSB-Ongoing-Accessions endpoint: `node bin/nypl-data-api.js get recap/nypl-bibs?barcode={barcode}&customerCode={customerCode}`
+ * If the endpoint returns a big bunch of SCSBXML, everything should be working on our end. Try processing again via SCSBuster
+ * If the endpoint doesn't return SCSBXML, it should spit out an error message that sheds light on the issue.
 
 ## Appendix A: SCSB API Search
 
