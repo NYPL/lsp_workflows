@@ -145,6 +145,7 @@ In the code examples that follow, I use the [nypl-data-api-client](https://www.n
 
 2.A If item is not in ItemService, check Sierra:
   * Use Sierra desktop client to search for the item by barcode (Function "Catalog" > select "b Barcode" > enter barcode)
+  * (Alternatively, see below for how to [query the Sierra REST API](#querying-by-item-barcode))
 
 2.A.i If the item can be found in Sierra, see if item can be found by id in ItemService :
  * Examine id in Sierra (next to "Record", you'll see a number like 'i156163123'
@@ -158,9 +159,29 @@ In the code examples that follow, I use the [nypl-data-api-client](https://www.n
 
 2.B If item is in ItemService, verify that the scsb-xml can be generated using the SCSBOngoingAccessions endpoint:
  * Look up the item's customer code [via the SCSB API](#appendix-a-scsb-api-search)
- * Query the SCSB-Ongoing-Accessions endpoint: `node bin/nypl-data-api.js get recap/nypl-bibs?barcode={barcode}&customerCode={customerCode}`
+ * Query the SCSB-Ongoing-Accessions endpoint: `node bin/nypl-data-api.js get recap/nypl-bibs?barcode={barcode}\&customerCode={customerCode}`
  * If the endpoint returns a big bunch of SCSBXML, everything should be working on our end. Try processing again via SCSBuster
  * If the endpoint doesn't return SCSBXML, it should spit out an error message that sheds light on the issue.
+
+**To force a single item metadata update to SCSB**:
+
+```
+node bin/nypl-data-api.js post recap/sync-item-metadata-to-scsb "\{\"barcodes\": [\"12345678901234\"], \"source\": \"bib-item-store-update\", \"user_email\": \"your-email@nypl.org\" }"
+```
+
+The above causes the [SCSB Item Updater](https://github.com/NYPL-discovery/scsb_item_updater) to immediately process the given barcode. View the [relevant Cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/ecs/scsb-item-updater;start=PT5M) to confirm the update succeeds without issue.
+
+**To force a whole Incompletes report to SCSB**:
+
+You may just want to re-enqueue everything in the Incompletes report for re-processing. Download the Incompletes report from the SCSB UI. Then:
+
+```
+# extract barcodes from Incompletes report into a single-col csv:
+csvfix exclude -f 1,2,3,5 -smq ExportIncompleteRecords_NYPL_[datetime].csv > incomplete-barcodes.csv
+
+# Loop over barcodes, posting them to the sync-item-metadata service:
+while read line; do echo "Syncing $line"; node bin/nypl-data-api.js post recap/sync-item-metadata-to-scsb "\{\"barcodes\": [\"$line\"], \"source\": \"bib-item-store-update\", \"user_email\": \"your-email@nypl.org\" }" -y; done < incomplete-barcodes.csv
+```
 
 ## Appendix A: SCSB API Search
 
@@ -429,3 +450,82 @@ A failed response may have HTTP response code 200, but resemble:
 }
 ```
 
+## Appendix F: Sierra REST API
+
+The Sierra REST API can be queried to get Marc-in-JSON data for bibs and items by id/barcode.
+
+The following assume you're using [Postman](https://www.postman.com/).
+
+### Authenticating
+
+Before running any query, start by fetching an OAUTH token:
+
+ * Select Authorization tab
+ * Type: "OAuth 2.0"
+ * Select "Get New Access Token"
+ * Enter token URL, client id, and secret from a member of the ILS team.
+ * Select "Request Token"
+ * Select "Use Token"
+
+### Querying by item id
+
+Issue a `GET` to, for example:
+
+`https://{{SIERRA_API_DOMAIN}}/iii/sierra-api/v3/items?id=37526855&fields=default,fixedFields,varFields`
+
+A successful response will resemble:
+
+```
+{
+    "total": 1,
+    "entries": [
+        {
+            "id": "37526855",
+            "updatedDate": "2019-12-06T14:45:51Z",
+            "createdDate": "2019-11-21T15:58:26Z",
+            "deleted": false,
+            "bibIds": [
+                "20777413"
+            ],
+            ...
+        }
+    ]
+}
+```
+
+### Querying by item barcode:
+
+Set up a a `POST` to:
+
+`https://{{SIERRA_API_DOMAIN}}/iii/sierra-api/v3/items/query?offset=0&limit=1`
+
+In the "Body" tab, choose "raw" and enter:
+
+```
+{
+  "target": {
+    "record": {"type": "item"},
+    "field": {"tag": "b"}
+  },
+  "expr": {
+    "op": "equals",
+    "operands": ["33433064322757"]
+  }
+}
+```
+
+Swap `33433064322757` for your desired barcode.
+
+A successful response will resemble:
+
+```
+{
+    "total": 1,
+    "start": 0,
+    "entries": [
+        {
+            "link": "https://[SIERRA_API_DOMAIN]/iii/sierra-api/v3/items/15397931"
+        }
+    ]
+}
+```
