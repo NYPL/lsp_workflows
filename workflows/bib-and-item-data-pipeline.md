@@ -137,7 +137,7 @@ This [component](https://github.com/NYPL-discovery/bulk-export-reader) was produ
 
 ## General Troubleshooting
 
-The most common thing that can go wrong is a item/bib appears stale in the Item/BibService\*. To determine if a bib/item is stale, request the resource via [platformdocs](https://platformdocs.nypl.org/) or via the NYPL Data Api Client CLI](https://github.com/NYPL-discovery/node-nypl-data-api-client#cli) (e.g. `node bin/nypl-data-api.js get items/sierra-nypl/10676119 | grep updatedDate`)
+The most common thing that can go wrong is a item/bib appears stale in the Item/BibService. To determine if a bib/item is stale, inspect the `updatedDate` of the resource via [platformdocs](https://platformdocs.nypl.org/) or via the [NYPL Data Api Client CLI](https://github.com/NYPL-discovery/node-nypl-data-api-client#cli) (e.g. `node bin/nypl-data-api.js get items/sierra-nypl/10676119 | grep updatedDate`)
 
 When records are stale in the Bib/Item services, it's almost never the fault of either service; The first places to check are upstream:
 
