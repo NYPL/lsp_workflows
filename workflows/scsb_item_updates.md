@@ -183,6 +183,27 @@ csvfix exclude -f 1,2,3,5 -smq ExportIncompleteRecords_NYPL_[datetime].csv > inc
 while read line; do echo "Syncing $line"; node bin/nypl-data-api.js post recap/sync-item-metadata-to-scsb "\{\"barcodes\": [\"$line\"], \"source\": \"bib-item-store-update\", \"user_email\": \"your-email@nypl.org\" }" -y; done < incomplete-barcodes.csv
 ```
 
+**To force a transfer in SCSB (i.e. move an item from one bib to another)**:
+
+When an item is transferred from one bib to another in Sierra, you must perform a "transfer" in SCSBuster to sync that change to SCSB. Using SCSBuster is easiest. If you need to force the change through on the back-end, here's how:
+
+Write a message like the following to the relevant SQS (e.g. sierra-updates-for-scsb-qa, sierra-updates-for-scsb-production):
+
+```
+{
+   "action" : "transfer",
+   "barcodes" : [
+      "33433069087256"
+   ],
+   "bibRecordNumber" : "b160463099",
+   "protectCGD" : false,
+   "source" : "bib-item-store-update",
+   "user_email" : "your-staff-email@nypl.org"
+}
+```
+
+Note that the `bibRecordNumber` must be a full, "check digit" Sierra bib number (the identifier shown in the Sierra client).
+
 ## Appendix A: SCSB API Search
 
 The query to find an item in SCSB looks like this:
