@@ -126,6 +126,83 @@ The notable difference between "transfer" and "update" is that we call [SCSB's "
 
 Errors can be thrown at several points in both "update" and "transfer" jobs. Errors are grouped by barcode and used to populate an email that is sent to the "user_email" associated with the request (in original SQS entry).
 
+## Troubleshooting
+
+### Incomplete records in SCSB
+
+Sometimes Heide will note that certain records persist in the SCSB Incompletes report.
+
+Often, you'll be handed the problematic barcodes. To get the list of problematic barcodes for yourself, you can use the SCSB UI to generate an Incompletes report. The SCSB Incompletes report can be obtained by logging into [SCSB UI](scsb.recaplib.org/) and navigating to Reports > Incomplete Records. Select "Show By" "NYPL" and click "Generate Report". Review the records shown or click "Export Records" to download a CSV.
+
+The process of determining why a barcode persists as an Incomplete is:
+
+**Before anything, check that the pollers are running and caught up.** See [Bib & Item Data Pipeline](./bib-and-item-data-pipeline) for notes on checking the health of the pollers and retrievers.
+
+In the code examples that follow, I use the [nypl-data-api-client](https://www.npmjs.com/package/@nypl/nypl-data-api-client) cli.
+
+1. Check for item in ItemService:
+  * Search ItemService by barcode (e.g. `node bin/nypl-data-api.js get items?barcode=33433122229572`)
+
+2.A If item is not in ItemService, check Sierra:
+  * Use Sierra desktop client to search for the item by barcode (Function "Catalog" > select "b Barcode" > enter barcode)
+  * (Alternatively, see below for how to [query the Sierra REST API](#querying-by-item-barcode))
+
+2.A.i If the item can be found in Sierra, see if item can be found by id in ItemService :
+ * Examine id in Sierra (next to "Record", you'll see a number like 'i156163123'
+ * Convert the "i-number" into an item id by removing the "i" prefix and dropping the final check digit (e.g. 'i156163123' becomes '15616312')
+ * Now query the ItemService for the item by id: `node bin/nypl-data-api.js get items/sierra-nypl/15616312`
+
+2.A.i.a If the item was not found in the ItemService by id, investigate a poller/retriever issue:
+ * Search the poller and retriever logs by item id (e.g. 37526855). See [Bib & Item Data Pipeline](./bib-and-item-data-pipeline) for links to logs.
+ * Optionally, restrict your search to the date range when you expect the retriever should have retrieved the item (e.g. if Sierra shows the item as having been last updated in the past few days, restrict your CloudWatch search to "1w" to make sure you completely cover the times when the retriever would have fetched the item)
+ * If you don't find the item id in the retriever logs when you logically should (based on the updated date shown in Sierra), the item was probably a victim of the [Sierra pagination issue](./bib-and-item-data-pipeline#appendix-a-sierra-pagination-issues), which caused the id to be lost. You can re-play the id in the pipeline. See [Appendix B: Re-playing updates](./bib-and-item-data-pipeline#appendix-b-re-playing-updates) for techniques for "re-playing" bib/item updates.
+
+2.B If item is in ItemService, verify that the scsb-xml can be generated using the SCSBOngoingAccessions endpoint:
+ * Look up the item's customer code [via the SCSB API](#appendix-a-scsb-api-search)
+ * Query the SCSB-Ongoing-Accessions endpoint: `node bin/nypl-data-api.js get recap/nypl-bibs?barcode={barcode}\&customerCode={customerCode}`
+ * If the endpoint returns a big bunch of SCSBXML, everything should be working on our end. Try processing again via SCSBuster
+ * If the endpoint doesn't return SCSBXML, it should spit out an error message that sheds light on the issue.
+
+**To force a single item metadata update to SCSB**:
+
+```
+node bin/nypl-data-api.js post recap/sync-item-metadata-to-scsb "\{\"barcodes\": [\"12345678901234\"], \"source\": \"bib-item-store-update\", \"user_email\": \"your-email@nypl.org\" }"
+```
+
+The above causes the [SCSB Item Updater](https://github.com/NYPL-discovery/scsb_item_updater) to immediately process the given barcode. View the [relevant Cloudwatch logs](https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logEventViewer:group=/ecs/scsb-item-updater;start=PT5M) to confirm the update succeeds without issue.
+
+**To force a whole Incompletes report to SCSB**:
+
+You may just want to re-enqueue everything in the Incompletes report for re-processing. Download the Incompletes report from the SCSB UI. Then:
+
+```
+# extract barcodes from Incompletes report into a single-col csv:
+csvfix exclude -f 1,2,3,5 -smq ExportIncompleteRecords_NYPL_[datetime].csv > incomplete-barcodes.csv
+
+# Loop over barcodes, posting them to the sync-item-metadata service:
+while read line; do echo "Syncing $line"; node bin/nypl-data-api.js post recap/sync-item-metadata-to-scsb "\{\"barcodes\": [\"$line\"], \"source\": \"bib-item-store-update\", \"user_email\": \"your-email@nypl.org\" }" -y; done < incomplete-barcodes.csv
+```
+
+**To force a transfer in SCSB (i.e. move an item from one bib to another)**:
+
+When an item is transferred from one bib to another in Sierra, you must perform a "transfer" in SCSBuster to sync that change to SCSB. Using SCSBuster is easiest. If you need to force the change through on the back-end, here's how:
+
+Write a message like the following to the relevant SQS (e.g. sierra-updates-for-scsb-qa, sierra-updates-for-scsb-production):
+
+```
+{
+   "action" : "transfer",
+   "barcodes" : [
+      "33433069087256"
+   ],
+   "bibRecordNumber" : "b160463099",
+   "protectCGD" : false,
+   "source" : "bib-item-store-update",
+   "user_email" : "your-staff-email@nypl.org"
+}
+```
+
+Note that the `bibRecordNumber` must be a full, "check digit" Sierra bib number (the identifier shown in the Sierra client).
 
 ## Appendix A: SCSB API Search
 
@@ -389,6 +466,86 @@ A failed response may have HTTP response code 200, but resemble:
                     "owningInstitutionItemId": ".i369264976"
                 }
             }
+        }
+    ]
+}
+```
+
+## Appendix F: Sierra REST API
+
+The Sierra REST API can be queried to get Marc-in-JSON data for bibs and items by id/barcode.
+
+The following assume you're using [Postman](https://www.postman.com/).
+
+### Authenticating
+
+Before running any query, start by fetching an OAUTH token:
+
+ * Select Authorization tab
+ * Type: "OAuth 2.0"
+ * Select "Get New Access Token"
+ * Enter token URL, client id, and secret from a member of the ILS team.
+ * Select "Request Token"
+ * Select "Use Token"
+
+### Querying by item id
+
+Issue a `GET` to, for example:
+
+`https://{{SIERRA_API_DOMAIN}}/iii/sierra-api/v3/items?id=37526855&fields=default,fixedFields,varFields`
+
+A successful response will resemble:
+
+```
+{
+    "total": 1,
+    "entries": [
+        {
+            "id": "37526855",
+            "updatedDate": "2019-12-06T14:45:51Z",
+            "createdDate": "2019-11-21T15:58:26Z",
+            "deleted": false,
+            "bibIds": [
+                "20777413"
+            ],
+            ...
+        }
+    ]
+}
+```
+
+### Querying by item barcode:
+
+Set up a a `POST` to:
+
+`https://{{SIERRA_API_DOMAIN}}/iii/sierra-api/v3/items/query?offset=0&limit=1`
+
+In the "Body" tab, choose "raw" and enter:
+
+```
+{
+  "target": {
+    "record": {"type": "item"},
+    "field": {"tag": "b"}
+  },
+  "expr": {
+    "op": "equals",
+    "operands": ["33433064322757"]
+  }
+}
+```
+
+Swap `33433064322757` for your desired barcode.
+
+A successful response will resemble:
+
+```
+{
+    "total": 1,
+    "start": 0,
+    "entries": [
+        {
+            "link": "https://[SIERRA_API_DOMAIN]/iii/sierra-api/v3/items/15397931"
         }
     ]
 }
