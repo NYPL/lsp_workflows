@@ -13,7 +13,7 @@ This doc goes through the process of creating a copy of the Discovery-SHEP stack
 ### Configure the correct graph and start neo4j
 
 1. Copy the database from your computer into the relevant ec2 machine, e.g. :
-scp -i ~/.ssh/nypl-digital-dev graph_v2.4.dump ubuntu@ec2-3-209-56-212.compute-1.amazonaws.com:~
+```scp -i ~/.ssh/nypl-digital-dev graph_v2.4.dump ubuntu@ec2-3-209-56-212.compute-1.amazonaws.com:~ ```
 2. Stop the neo4j instance sudo systemctl stop neo4j
 3. Remove the old graph.db
 		Sudo rm -rf graph.db/ (in the correct directory, which should be /var/lib/neo4j/data/databases. You may want to `mv` the graph first
