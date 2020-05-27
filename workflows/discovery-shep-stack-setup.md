@@ -14,14 +14,15 @@ This doc goes through the process of creating a copy of the Discovery-SHEP stack
 
 1. Copy the database from your computer into the relevant ec2 machine, e.g. :
 ```scp -i ~/.ssh/nypl-digital-dev graph_v2.4.dump ubuntu@ec2-3-209-56-212.compute-1.amazonaws.com:~ ```
-2. Stop the neo4j instance sudo systemctl stop neo4j
-3. Remove the old graph.db
-		Sudo rm -rf graph.db/ (in the correct directory, which should be /var/lib/neo4j/data/databases. You may want to `mv` the graph first
-4. Load the new graph db e.g.
+2. Stop the neo4j instance `sudo systemctl stop neo4j`
+3. `cd /var/lib/neo4j/data/databases`
+4. Remove the old graph.db
+		```sudo rm -rf graph.db/``` Alternatively, `mv` graph to somewhere else.
+5. Load the new graph db e.g.
 ```sudo su neo4j -c 'neo4j-admin load --from=/home/ubuntu/graph_v2.3b.dump' ```
-5. `Sudo systemctl start neo4j`
-6. Check the neo4j status `sudo systemctl status neo4j`
-7. Remove the scp’ed file
+6. `sudo systemctl start neo4j`
+7. Check the neo4j status `sudo systemctl status neo4j`
+8. Remove the scp’ed file
 
 
 ## Copying the Discovery Front End and SHEP API EBs
