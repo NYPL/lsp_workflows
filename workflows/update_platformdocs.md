@@ -14,9 +14,10 @@ The DocsService has a `DOCS_URLS` environment variable, whose value is a comma-d
 
 To add your app's Swagger doc to PlatformDocs:
 
- * AWS Console > Lambda > "DocsService-qa"
- * Add your new docs endpoint to the `DOCS_URLS` environment variable (separated with a comma)
- * Issue an authenticated call on `https://qa-platform.nypl.org/api/v0.1/docs`
+ * Create a PR to add your new docs endpoint to the [DocsService](https://github.com/NYPL/docsservice):
+   - Update `config/var_qa.env` and `config/var_development.env`, adding for example `,/docs/your-docs-endpoint` to the `DOCS_URLS` config
+   - Skip `config/var_development.env` if your endpoint is not configured in the dev-platform API Gateway
+ * Once merged and deployed, issue an authenticated call on `https://qa-platform.nypl.org/api/v0.1/docs`
  * Check [https://qa-platformdocs.nypl.org/api/list.json](https://qa-platformdocs.nypl.org/api/list.json) to confirm your changes are correct
  * Repeat for production
 
