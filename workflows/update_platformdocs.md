@@ -2,26 +2,9 @@
 
 PlatformDocs provides interactive documentation on the Platform API. It consists of an instance of the Swagger UI configured a single Swagger doc (aka "Swagger JSON") representing all Platform API endpoints.
 
-## I. Swagger UI
+If you just want to add your new app's endpoints to https://platformdocs.nypl.org/, see [Updating the Swagger JSON](#updating-the-swagger-json) below.
 
-The Swagger UI is hosted from one of two S3 buckets in `nypl-digital-dev`:
-
- * QA (https://qa-platformdocs.nypl.org) is hosted from "qa-platformdocs.nypl.org"
- * Production (https://platformdocs.nypl.org) is hosted from "platformdocs.nypl.org"
-
-Both S3 buckets are origins for CloudFront instances, which have CNAMEs 'qa-platformdocs.nypl.org' and 'platformdocs.nypl.org', respectively.
-
-### Updating the Swagger UI
-
-There is no NYPL repository for the Swagger UI. To update the Swagger UI:
-
- * Download the required Swagger UI release](https://github.com/swagger-api/swagger-ui/releases)
- * Unzip and navigate to the `dist` folder
- * Edit `index.html`, replacing the hardcoded swagger.json URL with "https://qa-platformdocs.nypl.org/api/list.json"
- * Upload the contents of the `dist` folder to the "qa-platformdocs.nypl.org" S3 bucket
- * Test and repeat for "platformdocs.nypl.org"
-
-## II. Swagger JSON
+## I. Swagger JSON
 
 We maintain a single Swagger JSON ([Open API Spec v2](https://swagger.io/specification/v2/)) that aggregates the individual Swagger JSONs from all endpoints in the Platform API. This is achieved via the [DocsService](https://github.com/NYPL/docsservice).
 
@@ -31,9 +14,10 @@ The DocsService has a `DOCS_URLS` environment variable, whose value is a comma-d
 
 To add your app's Swagger doc to PlatformDocs:
 
- * AWS Console > Lambda > "DocsService-qa"
- * Add your new docs endpoint to the `DOCS_URLS` environment variable (separated with a comma)
- * Issue an authenticated call on `https://qa-platform.nypl.org/api/v0.1/docs`
+ * Create a PR to add your new docs endpoint to the [DocsService](https://github.com/NYPL/docsservice):
+   - Update `config/var_qa.env` and `config/var_development.env`, adding for example `,/docs/your-docs-endpoint` to the `DOCS_URLS` config
+   - Skip `config/var_development.env` if your endpoint is not configured in the dev-platform API Gateway
+ * Once merged and deployed, issue an authenticated call on `https://qa-platform.nypl.org/api/v0.1/docs`
  * Check [https://qa-platformdocs.nypl.org/api/list.json](https://qa-platformdocs.nypl.org/api/list.json) to confirm your changes are correct
  * Repeat for production
 
@@ -61,3 +45,22 @@ If you don't mind waiting, docs are updated every 5 minutes automatically. This 
  * `docs:1` is one of ColdStartPreventer's configured `REQUEST_URLS`, meaning each invocation has the effect of issuing a single `GET` on `/api/v0.1/docs`, which occur every five minutes
 
  \* "ColdStartPreventer" rules and lambdas were created to keep certain Lambda endpoints "warm". Typically, when a Lambda is not invoked for a certain amount of time, [it's memory is "frozen" until the next invocation](https://docs.aws.amazon.com/lambda/latest/dg/running-lambda-code.html). When the next trigger comes in, it can take several seconds for the Lambda to be reconstituted. By issuing regular calls to endpoints serviced by specific Lambdas, we theoretically prevent those Lambdas from ever being frozen, ensuring that requests are snappy. The use of the "ColdStartPreventer" lambdas to hit a GET endpoint that rebuilds and uploads our Platform API Swagger doc is, admittedly, a bit of a hack.
+
+## II. Swagger UI
+
+The Swagger UI is hosted from one of two S3 buckets in `nypl-digital-dev`:
+
+ * QA (https://qa-platformdocs.nypl.org) is hosted from "qa-platformdocs.nypl.org"
+ * Production (https://platformdocs.nypl.org) is hosted from "platformdocs.nypl.org"
+
+Both S3 buckets are origins for CloudFront instances, which have CNAMEs 'qa-platformdocs.nypl.org' and 'platformdocs.nypl.org', respectively.
+
+### Updating the Swagger UI
+
+There is no NYPL repository for the Swagger UI. To update the Swagger UI:
+
+ * Download the required Swagger UI release](https://github.com/swagger-api/swagger-ui/releases)
+ * Unzip and navigate to the `dist` folder
+ * Edit `index.html`, replacing the hardcoded swagger.json URL with "https://qa-platformdocs.nypl.org/api/list.json"
+ * Upload the contents of the `dist` folder to the "qa-platformdocs.nypl.org" S3 bucket
+ * Test and repeat for "platformdocs.nypl.org"
