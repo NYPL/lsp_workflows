@@ -71,7 +71,3 @@ As of October 24, 2023:
   ]
 }
 ```
-### follow up:
-* should log level be moved down to info so we actually see it in the logs?
-* nypl items with unrequestable holding locations should be logged as such, not as 0 delivery locations.
-* Remove `eddRequestable` from `deliveryLocationsByBarcode` endpoint and `deliveryLocations` resolver in general
