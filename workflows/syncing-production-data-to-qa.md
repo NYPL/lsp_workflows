@@ -22,7 +22,7 @@ The pollers are controlled by EventBridge triggers:
  - [SierraBibUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraBibUpdatePoller-qa?tab=configure)
  - [SierraBibDeleteUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraBibDeleteUpdatePoller-qa?tab=configure)
  - [SierraItemUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraItemUpdatePoller-qa?tab=configure)
- - [SierraItemDeleteUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraItemUpdatePoller-qa?tab=configure)
+ - [SierraItemDeleteUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraItemDeleteUpdatePoller-qa?tab=configure)
  - [SierraHoldingUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraHoldingUpdatePoller-qa?tab=configure)
  - [SierraHoldingDeleteUpdatePoller-qa](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/SierraHoldingDeleteUpdatePoller-qa?tab=configure)
 
@@ -33,7 +33,7 @@ To enable/disable the trigger:
 
 ## Syncing Production Elasticsearch to QA
 
-The following describes how to copy production down to QA using logstash with no downtime.
+The following describes how to copy production down to QA with no downtime using [logstash](https://www.elastic.co/logstash), a powerful log-streaming utility that's also pretty good at copying Elasticsearch indexes between servers. (Installation details below.)
 
 > Note that this method took 3 days to complete the first time it was run because it had to be resumed frequently due to dropped Internet. The second time it was run it ran continuously for 10 hours.
 
@@ -43,7 +43,11 @@ Ensure you have access to both domains by [adding your IP to the Access Policy f
 
 **2. Prepare the destination index**
 
-Prepare the index using `index-admin prepare` to apply mapping, etc.:
+Prepare the index using `index-admin prepare` to apply mapping, etc.
+
+FIXME: For this, you'll need to use the old [discovery-api-indexer](https://github.com/NYPL/discovery-api-indexer). We're in the process of migrating this functionality over to RCI but it's not ready for this workflow at writing.
+
+Within the discovery-api-indexer repo:
 
 ```
 node jobs/index-admin prepare --index resources-[YYYY-MM-DD] --profile nypl-digital-dev --envfile config/qa.env
@@ -79,7 +83,7 @@ output {
 
 Note the input/output may need to be changed from "opensearch" to "elasticsearch" depending on whether the domain is actually AWS OpenSearch or a classic Elasticsearch domain. The 5.3 domains appear to be usable as "elasticsearch" targets even though AWS calls them opensearch - probably grandfathered access points.
 
-Note also inclusion of "parallelPublisher" in `remove_field` to tell logstash to remove parallelPublisher when found. This was a deprecated property in favor of parallelPublisherLiteral property in any document it's 
+Note also the inclusion of "parallelPublisher" in `remove_field` to tell logstash to remove parallelPublisher when found. This was a deprecated property in favor of "parallelPublisherLiteral". The "parallelPublisher" form exists in production, is ignored, and we don't want it in QA.
 
 **4. Begin the copy**
 
@@ -97,11 +101,13 @@ cd /usr/local/Cellar/logstash/8.13.2/bin # Change to logstash path
 ./logstash-plugin install logstash-input-opensearch
 ```
 
-The `LS_JAVA_OPTS` bit above invites logstash to use a reasonable amount of memory for the work it needs to do rather than fall over with a `java.lang.OutOfMemoryError` around about 7M records. A proverbial "make yourself at home" to the JVM.
+The `LS_JAVA_OPTS` bit above invites logstash to use a reasonable amount of memory for the work it needs. A proverbial "make yourself at home" to the JVM. The number chosen here appears to accomodate the process. Without it, you may see the process fall over with a `java.lang.OutOfMemoryError` around about 7M records.
 
 Follow progress by checking index doc count via `GET https://[fqdn of qa domain]]/_cat/indices?v`
 
-**If the pipeline fails**, you may need to kill the process via multiple `CTRL-c`s. Resume from the last indexed `uri`. Determine the last seen `uri` by POSTing the following to `{{ES_BASE_URI}}/{{ES_INDEX_NAME}}/resource/_search`
+**If the pipeline fails**, (evidenced by errors, stacktraces, etc.) you may need to kill the process via multiple `CTRL-c`s.
+
+Resume from the last indexed `uri`. Determine the last seen `uri` by POSTing the following to `{{ES_BASE_URI}}/{{ES_INDEX_NAME}}/resource/_search`. The single record returned has the last indexed `uri` (which is also the `_id` value).
 
 ```
 {
@@ -112,7 +118,7 @@ Follow progress by checking index doc count via `GET https://[fqdn of qa domain]
 }
 ```
 
-The single record returned has the last indexed `uri` (which is also the `_id` value). Once obtained, cause `logstash` to begin where you left off by editing the `query` line in your logstash conf as follows:
+Once you know the highest `uri` indexed by your process, tell `logstash` to begin where you left off by editing the `query` line in your logstash conf as follows:
 
 ```
   query => '{ "sort": [ "uri" ], "query": { "query_string": { "query": "uri:>cb13752240" } } }'
