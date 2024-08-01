@@ -30,7 +30,7 @@ Due to both this approach, and the circumstances under which the LSP was built, 
    - The request is for an off-site item (i.e. an item whose location id matches `/^rc/`)
    - The hold originated in RC (i.e. has a `pickupLocation` or is EDD). If the hold originated in SCSB, their system already knows about it so we do not need to tell them about it through the API
 
-In order to hit the SCSB API, the HoldRequestConsumer makes a request to the PatronService to change the patron id for the barcode
+   *In order to hit the SCSB API, the HoldRequestConsumer makes a request to the PatronService to change the patron id for the barcode
 
 9. Finally, if that request was either a successful EDD request, a successful on-site request, or was /unsuccessful/, HoldRequestConsumer pushes the result to the HoldRequestResult event stream.
 
