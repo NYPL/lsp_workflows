@@ -35,16 +35,31 @@ Note the following is a targetted distillation of information in [Discovery Prop
 * **ReCAP customer code**: This uniquely identifies the location in ReCAP.
 * **Allow sierra hold (nypl:allowSierraHold)**: Boolean that should be `true` for any holding location whose items are requestable via native Sierra interfaces. Will be `false` (or unset) for ReCAP locations. (I believe this property is maintained as a formality; The mechanism for showing/suppressing locations lies elsewhere. It appears to often be wrong, e.g. many Scholar rooms delivery locations have it marked as `true`)
 
-### Customer Code
+### ReCAP Customer Code
 
 * **ReCAP customer code**: This uniquely identifies the location in ReCAP. All customer codes map to a single NYPL/partner location. Customer codes tend to be minted after a new Sierra location is created/proposed. (e.g. 'NH', 'SP')
 * **ReCAP Label**: Label used by ReCAP. Mostly for documentation purpose; Not shown in any interface. (e.g. "SASB Rose Main Reading Room", "Schomburg Prints & Photographs")
 * **ReCAP locations that may deliver to this location**: The set of ReCAP locations (customer codes) whose items may be delivered to this location.
 * **ReCAP locations that items at this location may deliver to**: Less commonly, if the location added is assigned as the `customerCode` (i.e. home location) of an item, to what locations may that item be delivered?
 
+### M2 Customer Code
+
+* **code**: Unique identifier
+* **label**: Label
+* **deliverableTo**: The set of M2 customer codes that items in this customer code can be delivered to
+* **requestable**: Whether or not items in this code may be requested
+* **Assocated Sierra location**: Sierra location code equivalent
+
 ## Add entries to NYPL-Core
 
-Having collected the above information, add the relevant data to [locations.csv](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/locations.csv), [locations.json](https://github.com/NYPL/nypl-core/blob/master/vocabularies/json-ld/locations.json), [recapCustomerCodes.csv](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/recapCustomerCodes.csv), and [recapCustomerCodes.json](https://github.com/NYPL/nypl-core/blob/master/vocabularies/json-ld/recapCustomerCodes.json).
+Having collected the above information, add the relevant data to [locations.csv](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/locations.csv), [recapCustomerCodes.csv](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/recapCustomerCodes.csv), and [m2CustomerCodes.csv](https://github.com/NYPL/nypl-core/blob/master/vocabularies/csv/m2CustomerCodes.csv).
+
+Be sure to include links between entries:
+ - If adding a new delivery location, be sure the appropriate holding locations include the new location in relevant `deliverableTo` properties.
+ - If adding a new holding location, be sure the deliverableTo includes appropriate entries (usually modelled on a similar location)
+
+Review previous similar additions as a reference:
+ - [Addition of mal23 scholar room with associated updates to M2 and ReCAP customer codes](https://github.com/NYPL/nypl-core/compare/v2.19...v2.x-mal23-3)
 
 Follow instructions on [nypl-core](https://github.com/NYPL/nypl-core) for testing, reviewing, tagging, and publishing your changes.
 
@@ -55,6 +70,7 @@ To test a location change ahead of it going live:
 1. [Make the change in NYPL-Core as a pre-release](https://github.com/NYPL/nypl-core#general-workflow-for-changes)
 1. Change HoldRequestConsumer-qa `NYPL_CORE_VERSION` to pre-release version number (e.g. `v1.29a`)
 1. [Publish your changes to the QA S3 bucket](https://github.com/NYPL/nypl-core-objects#pushing-to-s3) (e.g. `NYPL_CORE_VERSION=v1.29a npm run deploy-qa`).
+1. Make sure the HoldRequestConsumer-qa has `NYPL_CORE_VERSION` set to your pre-release version number
 1. Make sure the HoldRequestResultConsumer-qa has `API_RECAP_LOCATION_URL` and `API_SIERRA_LOCATION_URL` configured for 'qa' S3 (note this app *encrypts* these config values..)
    * This component uses the customerCode and sierra location mapping files in S3 to derive the proper location labels for `deliveryLocation` and `pickupLocation`, which are set exclusively for requests originating from the SCSB UI and SCC, respectively. The labels are used in an email sent to the patron.
 1. Make sure the RecapHoldRequestConsumer-qa is configured with a 'qa' S3 `LOCATIONS_URL`
