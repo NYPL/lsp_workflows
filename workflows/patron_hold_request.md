@@ -16,7 +16,7 @@ Due to both this approach, and the circumstances under which the LSP was built, 
 
 3. In both cases, the action of requesting a hold be placed results in an HTTP request to the API Gateway, and thereby to the HoldRequestService. This request includes the patron id regardless of source.
 
-4. The difference between a request being sent through the SCC and SCSB UI is that in the former case the hold request has a ‘pickup location’ (Sierra location id) and in the latter it has a ‘delivery location’ (ReCAP customer code). This becomes significant in step 5.
+4. The difference between a request being sent through the RC and SCSB UI is that in the former case the hold request has a ‘pickup location’ (Sierra location id) and in the latter it has a ‘delivery location’ (ReCAP customer code). This becomes significant in step 5.
 
 5. The HoldRequestService stores details of the Hold request (i.e., the patron, item, whether EDD or delivered, and if the latter a delivery location) and enters an event into the HoldRequest Kinesis stream.
 
