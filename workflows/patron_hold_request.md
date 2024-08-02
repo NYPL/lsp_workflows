@@ -10,27 +10,25 @@ Due to both this approach, and the circumstances under which the LSP was built, 
 
 # Hold Request Process Summary
 
-1. Starting in the top-left corner, there are two ways that hold requests can be generated on behalf of NYPL patrons. The standard way is for a hold request button to be pressed in the NYPL Shared Collection Catalog (https://nypl.org/rc) by a logged-in NYPL patron. The other way is for a SCSB user to place the hold in the SCSB UI on behalf of a specific patron.
+1. Starting in the top-left corner, there are two ways that hold requests can be generated on behalf of NYPL patrons. The standard way is for a hold request button to be pressed in the [NYPL Research Catalog](https://nypl.org/research/research-catalog) ("RC") by a logged-in NYPL patron. The other way is for a SCSB user to place the hold in the SCSB UI on behalf of a specific patron.
 
 2. If the request originates from RC, the request will include the patron id fetched from the user’s cookie. If the request originates from SCSB, SCSB will make a request to the patron service to get the patron id from the barcode, before sending that request forward to the HoldRequestService.
 
 3. In both cases, the action of requesting a hold be placed results in an HTTP request to the API Gateway, and thereby to the HoldRequestService. This request includes the patron id regardless of source.
 
-4. The difference between a request being sent through the RC and SCSB UI is that in the former case the hold request has a ‘pickup location’ (Sierra location id) and in the latter it has a ‘delivery location’ (ReCAP customer code). This becomes significant in step 5.
+4. The difference between a request being sent through RC and SCSB UI is that in the former case the hold request has a ‘pickup location’ (Sierra location id) and in the latter it has a ‘delivery location’ (ReCAP customer code). This becomes significant in step 5.
 
 5. The HoldRequestService stores details of the Hold request (i.e., the patron, item, whether EDD or delivered, and if the latter a delivery location) and enters an event into the HoldRequest Kinesis stream.
 
 6. That event is picked up by the HoldRequestConsumer, whose job it is to push the request to one of two places depending on if the item is on- or off-site.
 
 7. If the request is for an on-site item, the HoldRequestConsumer will forward the request to the OnSiteHoldRequestService. This includes phys and edd requests. Note that requests for on-site items implicitly originated in RC since SCSB has no knowledge of our on-site items.
-
    * The OnSiteHoldRequestService handles phys and edd requests for on-site items. When the incoming hold is a physical request, it uses the Sierra API to create the hold on the patron's account, and returns the response to the caller. If the incoming request is EDD, it generates a LibAnswers email with information about the request.
 
-8. If the request is for an off-site item, the HoldRequestConsumer will forward the request to SCSB. Critiera for pushing the hold request to SCSB:
-   - The request is for an off-site item (i.e. an item whose location id matches `/^rc/`)
-   - The hold originated in RC (i.e. has a `pickupLocation` or is EDD). If the hold originated in SCSB, their system already knows about it so we do not need to tell them about it through the API
-
-9. Finally, if that request was either a successful EDD request, a successful on-site request, or was /unsuccessful/, (three conditions where there is nothing more to process downstream) HoldRequestConsumer pushes the result to the HoldRequestResult event stream.
+8. If the request is for an off-site item, the HoldRequestConsumer will forward the request to SCSB.
+   - Critiera for pushing the hold request to SCSB:
+     - The request is for an off-site item (i.e. an item whose location id matches `/^rc/`)
+     - The hold originated in RC (i.e. has a `pickupLocation` or is EDD). If the hold originated in SCSB, their system already knows about it so we do not need to tell them about it through the API
    - On the SCSB side, when a request is received:
      - SCSB changes the item's availability status to "Not Available"
      - SCSB changes the request status initially as "Processing"
@@ -39,8 +37,9 @@ Due to both this approach, and the circumstances under which the LSP was built, 
        - If the item belongs to NYPL, SCSB will hit our checkout-requests endpoint to check the item out to a ["Generic EDD Patron"](https://docs.google.com/spreadsheets/d/1mr-LEQc1CZbQPEiLXuKK2UNG15tcRMuezDJofIVwH-4/edit#gid=0). We [translate the generic patron barcode](https://github.com/NYPL/checkout-request-service/blob/d181b6de2190aa5e7e57a47ceff49de0f1123326/src/Controller/CheckoutRequestController.php#L315-L333) into one of a number of different patron barcodes, randomly, to avoid hitting checkout limits on the generic cards.
        - If the item belongs to a partner, SCSB does not hit any of our hold or checkout-requests endpoints.
 
-10. The HoldRequestResultConsumer picks up that event and emails the patron to let them know the status of their request. It also issues a `PATCH` on the hold record in the HoldRequestService to update `processed` (to `TRUE`) and `success` (to whatever the result was).
+9. Finally, if that request was either an EDD request, a successful on-site request, or was /unsuccessful/, (three conditions where there is nothing more to process downstream) HoldRequestConsumer pushes the result to the HoldRequestResult event stream. (The only scenario where we would not, at this stage, write to the HoldRequestResult event stream is phys off-site requests - because those require additional processing before we know the "result".)
 
+10. The HoldRequestResultConsumer picks up that event and emails the patron to let them know the status of their request. It also issues a `PATCH` on the hold record in the HoldRequestService to update `processed` (to `TRUE`) and `success` (to whatever the result was).
     - Note that this is the end of the line for all on-site requests as well as off-site EDD requests. There is nothing more to process.
 
 11. For off-site phys requests, there's more to do. Moving to the bottom left [of the diagram](https://docs.google.com/presentation/d/1Tmb53yOUett1TLclwkUWa-14EOG9dujAyMdLzXOdOVc/edit#slide=id.g8c9198e121_0_0), if the hold was a "retrieval" (i.e. phys, not an EDD request) we now want to make sure that it is represented in Sierra, so that a user can see their holds. SCSB initiates this process by hitting our RecapHoldRequestService, through the API Gateway again. It actually does this before it has checked if the item is available in LAS, presumably as it wants to make sure Sierra will allow the hold [which causes us some problems]. This request has the patron barcode, not id. Like the HoldRequestService, RecapHoldRequestService stores the data of the hold in its local DB, and registers an event, in this case within the RecapHoldRequest event stream. If the RecapHoldRequest call indicates a failure, SCSB marks the request status as "ILS Exception" and rollbacks the item availability status.
