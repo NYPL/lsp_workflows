@@ -2,29 +2,35 @@
 
 ## Discovery API
 
-Repo: https://github.com/NYPL-discovery/discovery-api
+Repo: https://github.com/NYPL/discovery-api
 
 Workflows:
  * [Discovery UI Search](workflows/discovery_ui_search.md)
 
 ## Discovery UI
 
-Repo: https://github.com/NYPL-discovery/discovery-front-end
+Repo: https://github.com/NYPL/discovery-front-end
 
 Workflows:
  * [Discovery UI Search](workflows/discovery_ui_search.md)
  * [Patron Hold Request](workflows/patron_hold_request.md)
 
+## Research Catalog
+
+Soon to repleace Discovery UI
+
+Repo: https://github.com/NYPL/research-catalog/
+
 ## Encore Custom Styling
 
-Repo: https://bitbucket.org/NYPL/dgx-encore-custom-styling/src)
+Repo: https://bitbucket.org/NYPL/dgx-encore-custom-styling/src
 
 Workflows: 
  * [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
 
-## Header Component
+## Header App
 
-Repo: https://github.com/NYPL/dgx-header-component
+Repo: https://github.com/NYPL/nypl-header-app
 
 Workflows: 
  * [Encore and Research Catalog Log in and Log out](workflows/encore_and_research_catalog_log_in_and_log_out.md)
@@ -47,7 +53,7 @@ Workflows:
 
 ## Hold Request Service
 
-Repo: https://github.com/NYPL/hold-reuqest-service
+Repo: https://github.com/NYPL/hold-request-service
 
 Workflows:
  * [Patron Hold Request](workflows/patron_hold_request.md)
@@ -82,7 +88,7 @@ Repo: https://github.com/NYPL/nypl-core-objects
 Workflows:
  * [SCSB Suppressed Locations](workflows/scsb_suppressed_locations.md)
 
-## Patron Service
+## Patron Service (Deprecated)
 
 Repo: https://github.com/NYPL-discovery/patron-service
 
