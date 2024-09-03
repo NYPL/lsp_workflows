@@ -88,17 +88,13 @@ Things you may wish to change:
  * Environment > Variables: Add environmental variables as required. Above we've just set `LOG_LEVEL=debug`.
  * Handler: This specifies what file and function name to pass incoming events to. A file named "app" (i.e. "app.js" or "app.rb") is a common choice. A function called "handle_event" is a common choice for the function.
 
-Make sure your choice of runtime agrees with your local Node/Ruby version:
+Make sure the choice of AWS runtime agrees with your local Node, Ruby, or Python version. See the AWS supported [Lambda runtimes](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html#runtimes-supported) for a breakdown of supported runtimes, as well as deprecation dates for older runtimes.
 * If using Ruby:
-  - Select version `3.3.0` as that's [the max runtime supported in AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
-  - Officially declare your choice of ruby version in your repo via `echo "3.3.0" > .ruby-version`
-  - Ensure you're using the declared ruby version via `rvm use`, which will read your `.ruby-version`
+  - Officially declare your choice of ruby version in your repo. For example, run `echo "3.3" > .ruby-version` to set it as `3.3`.
+  - Ensure you're using the declared ruby version via `rvm use`, which will read your `.ruby-version`.
 * If using Node:
-  - Select Node version `20`. Better to choose the latest until you have a reason not to.
-  - Officially declare your choice of Node version in your repo by adding it to `.nvmrc`
-  - Ensure you're using the declared Node version via `nvm use`, which will read your `.nvmrc`
-* If using Python:
-  - Select Python version `3.12.0`.
+  - Officially declare your choice of Node version in your repo by adding it to `.nvmrc`.
+  - Ensure you're using the declared Node version via `nvm use`, which will read your `.nvmrc`.
 
 ### C. Develop your app
 

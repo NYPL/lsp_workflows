@@ -2,7 +2,7 @@
 
 Please see diagram at: [TBD]
 
-This workflow shows the steps for searching an item, patron log in, choosing a delivery location, and being ready to submit a hold request on NYPL's [Research Catalog](https://www.nypl.org/research/research-catalog) (also known as Discovery UI). The QA tier is [here](https://qa-www.nypl.org/research/research-catalog).
+This workflow shows the steps for searching an item, patron log in, choosing a delivery location, and being ready to submit a hold request on NYPL's [Research Catalog](https://www.nypl.org/research/research-catalog) (formerly known as Discovery UI). The QA tier is [here](https://qa-www.nypl.org/research/research-catalog).
 
 For the workflow after submitting a hold request, please see [Patron Hold Request](workflows/patron_hold_request.md).
 
