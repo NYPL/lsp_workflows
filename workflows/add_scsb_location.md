@@ -94,3 +94,35 @@ Now you can test a few different angles:
 1. Make sure the discovery-api-production Elasticbeanstalk app has latest `NYPL_CORE_VERSION` (or "master"). Restart app server if you make any change (as simply changing the ENV var [does not cause app code to reevaluate the variable](https://github.com/NYPL-discovery/discovery-api/issues/136)).
 
 Note that no change to `HoldRequestResultConsumer-production` is necessary for Production deployment because it [draws on the production S3 bucket for every lookup](https://github.com/NYPL/hold-request-result-consumer/blob/master/src/OAuthClient/LocationClient.php#L16). Similarly, no change is necessary for `RecapHoldRequestConsumer-production because it also [downloads the production S3 mapping for every lookup](https://github.com/NYPL/recap-hold-request-consumer/blob/bb8b00c46552c250b6c1b2bc7af245b4d0664978/models/location.rb#L9).
+
+## Notifying ReCAP, HD, and M2 LAS
+
+In addition to adding new stop/customer codes to NYPL-Core, we need to be sure the lower level systems are also aware of the new location.
+
+### ReCAP
+
+Notify ReCAP staff of the new location. The pertinent information is:
+
+ - code (e.g. OE)
+ - label (e.g. "SASB Scholar Room 223-OE"
+ - request restructions (i.e. delivery rules. Often indicated by reference to existing code.)
+   - If adding a customer code: The set of locations to which items in this new location can be sent. And whether EDD is permitted.
+   - If adding a stop code: The set of locations deliverable to it.
+ - Sierra location code (e.g. mal23) - ReCAP staff seem interested in having this information
+ - research center (e.g. "SASB / W 40th")
+
+Typically, ReCAP staff can make these changes in SCSB UAT & LAS to enable us to test in QA before promoting to production.
+
+### Harvard HD
+
+Notify Harvard staff of new stop codes so that they can add the new code to HD LAS. They'll need to know:
+
+ - code (e.g. OE)
+ - label (e.g. "SASB Scholar Room 223-OE"
+ - research center (e.g. "SASB / W 40th")
+
+### M2 LAS
+
+When adding a new SASB location, M2 LAS will need to know about it if it's a holding location in M2 or a delivery location that M2 items may be sent to. Notify M2 staff of the new location so that they can create the necessary gfa_stop_code-sierra_hold_pickup_location mapping in the script that connects Sierra to M2 LAS.
+
+those codes to SCSB and the various instances of LAS 
