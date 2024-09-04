@@ -101,10 +101,10 @@ In addition to adding new stop/customer codes to NYPL-Core, we need to be sure t
 
 ### ReCAP
 
-Notify ReCAP staff of the new location. The pertinent information is:
+Notify ReCAP staff of the new location. They need the following:
 
  - code (e.g. OE)
- - label (e.g. "SASB Scholar Room 223-OE"
+ - label (e.g. "SASB Scholar Room 223-OE")
  - request restructions (i.e. delivery rules. Often indicated by reference to existing code.)
    - If adding a customer code: The set of locations to which items in this new location can be sent. And whether EDD is permitted.
    - If adding a stop code: The set of locations deliverable to it.
@@ -115,14 +115,14 @@ Typically, ReCAP staff can make these changes in SCSB UAT & LAS to enable us to 
 
 ### Harvard HD
 
-Notify Harvard staff of new stop codes so that they can add the new code to HD LAS. They'll need to know:
+Notify Harvard staff of new stop codes so that they can update HD LAS. HD LAS will reject a request if it doesn't recognize the stop code. They'll need to know:
 
  - code (e.g. OE)
- - label (e.g. "SASB Scholar Room 223-OE"
+ - label (e.g. "SASB Scholar Room 223-OE")
  - research center (e.g. "SASB / W 40th")
 
 ### M2 LAS
 
-When adding a new SASB location, M2 LAS will need to know about it if it's a holding location in M2 or a delivery location that M2 items may be sent to. Notify M2 staff of the new location so that they can create the necessary gfa_stop_code-sierra_hold_pickup_location mapping in the script that connects Sierra to M2 LAS.
-
-those codes to SCSB and the various instances of LAS 
+When adding a new SASB location, M2 LAS needs to be updated if the new location is 1) a holding location in M2 or 2) a delivery location that M2 items may be sent to. Notify M2 staff of the new location (Sierra location code and label) so that they can:
+ 1. Create a new M2 LAS stop code to represent the new location, and
+ 2. Coordinate with Ops to create the necessary gfa_stop_code-sierra_hold_pickup_location mapping in the script that connects Sierra to M2 LAS.
