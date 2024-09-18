@@ -64,6 +64,8 @@ Review previous similar additions as a reference:
 
 Follow instructions on [nypl-core](https://github.com/NYPL/nypl-core) for testing, reviewing, tagging, and publishing your changes.
 
+Note that, when adding or updating ReCAP stop codes and customer codes, ReCAP staff need to make changes to SCSB and LAS. When adding stop codes, HD staff also need to make changes to HD LAS. See [this doc for specifics](https://newyorkpubliclibrary.atlassian.net/wiki/spaces/DIGTL/pages/153258749/SCSB+Environments+and+Documentation#SCSBEnvironmentsandDocumentation-AddingDeliveryLocationsasCustomerCodestoSCSB).
+
 ### To test changes to NYPL-Core
 
 To test a location change ahead of it going live:
